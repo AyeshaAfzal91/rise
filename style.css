@@ -296,3 +296,129 @@ footer {
             grid-template-columns: 1fr;
         }
     }
+
+    /* ================================
+       Keynote Speech
+       ================================ */
+
+    .keynote-card {
+        margin-top: 20px;
+        background: #ffffff;
+        border: 1px solid #dfe6e8;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Speaker Header */
+    .keynote-speaker {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 25px 30px;
+        background: linear-gradient(
+            135deg,
+            #f0f8f9 0%,
+            #ffffff 100%
+        );
+        border-bottom: 1px solid #e3eaec;
+    }
+
+    .keynote-photo img {
+        width: 125px;
+        height: 125px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 5px solid #ffffff;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .keynote-speaker-info {
+        flex: 1;
+    }
+
+    .keynote-speaker-name {
+        font-size: 28px;
+        margin: 0 0 5px;
+    }
+
+    .keynote-speaker-name a {
+        color: #005f73;
+        text-decoration: none;
+    }
+
+    .keynote-speaker-name a:hover {
+        text-decoration: underline;
+    }
+
+    .keynote-affiliation {
+        margin: 0;
+        font-size: 16px;
+        color: #555;
+    }
+
+    /* Talk Title */
+    .keynote-title {
+        margin: 0;
+        padding: 22px 30px;
+        color: #222;
+        font-size: 21px;
+        line-height: 1.45;
+        font-weight: 700;
+        background: #ffffff;
+        border-bottom: 1px solid #e8edef;
+    }
+
+    /* Abstract / Bio */
+    .keynote-section {
+        padding: 22px 30px;
+    }
+
+    .keynote-section h3 {
+        margin: 0 0 10px;
+        color: #005f73;
+        font-size: 18px;
+        font-weight: 700;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #e0f0f2;
+    }
+
+    .keynote-section p {
+        margin: 0;
+        color: #444;
+        font-size: 15px;
+        line-height: 1.7;
+        text-align: justify;
+    }
+
+    .keynote-bio {
+        background: #f8fafb;
+        border-top: 1px solid #e8edef;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+        .keynote-speaker {
+            flex-direction: column;
+            text-align: center;
+            padding: 25px 20px;
+        }
+
+        .keynote-speaker-name {
+            font-size: 24px;
+        }
+
+        .keynote-title,
+        .keynote-section {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .keynote-title {
+            font-size: 19px;
+        }
+
+        .keynote-section p {
+            text-align: left;
+        }
+    }
