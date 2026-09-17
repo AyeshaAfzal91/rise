@@ -216,3 +216,83 @@ footer {
         padding: 18px;
     }
 }
+
+/* -------------------------------------------------------
+   PANEL
+   ------------------------------------------------------- */
+    .panel-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin-top: 25px;
+    }
+
+    .panel-card {
+        text-align: center;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .panel-photo {
+        margin-bottom: 10px;
+    }
+
+    .panel-img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .panel-track {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        margin-bottom: 5px;
+    }
+
+    .panel-track.academia {
+        color: #005f73;
+        background: #dff3f5;
+    }
+
+    .panel-track.national-lab {
+        color: #7b3f00;
+        background: #fff0dc;
+    }
+
+    .panel-track.industry {
+        color: #5b2a86;
+        background: #eee2f7;
+    }
+
+    .panel-name {
+        font-size: 21px;
+        margin: 5px 0;
+    }
+
+    .panel-name a {
+        text-decoration: none;
+    }
+
+    .panel-name a:hover {
+        text-decoration: underline;
+    }
+
+    .panel-affiliation {
+        margin: 3px 0 0;
+        color: #555;
+        font-size: 15px;
+    }
+
+    @media (max-width: 800px) {
+        .panel-grid {
+            grid-template-columns: 1fr;
+        }
+    }
