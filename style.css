@@ -13,6 +13,8 @@
     --card-shadow: rgba(0, 0, 0, 0.08);
     --transition: 0.25s ease-in-out;
     --radius: 10px;
+
+    /* Wider desktop layout */
     --max-width: 1400px;
 }
 
@@ -23,6 +25,7 @@ body {
     margin: 0;
     padding: 0;
     line-height: 1.7;
+    font-size: 16px;
 }
 
 /* -------------------------------------------------------
@@ -103,6 +106,11 @@ h3 {
     margin-top: 25px;
 }
 
+p {
+    font-size: 16px;
+    line-height: 1.7;
+}
+
 /* -------------------------------------------------------
    LINKS
    ------------------------------------------------------- */
@@ -177,10 +185,25 @@ footer {
     border-left: 6px solid var(--primary);
 }
 
-.blue   { background-color: #d0e7ff; border-left-color: #3b82f6; }
-.green  { background-color: #d7f7d7; border-left-color: #22c55e; }
-.yellow { background-color: #fffac8; border-left-color: #eab308; }
-.orange { background-color: #ffe0b3; border-left-color: #f97316; }
+.blue {
+    background-color: #d0e7ff;
+    border-left-color: #3b82f6;
+}
+
+.green {
+    background-color: #d7f7d7;
+    border-left-color: #22c55e;
+}
+
+.yellow {
+    background-color: #fffac8;
+    border-left-color: #eab308;
+}
+
+.orange {
+    background-color: #ffe0b3;
+    border-left-color: #f97316;
+}
 
 .time-block {
     margin: 5px 0;
@@ -195,6 +218,7 @@ footer {
    ------------------------------------------------------- */
 
 @media (max-width: 768px) {
+
     header {
         grid-template-columns: 1fr;
         text-align: center;
@@ -204,7 +228,8 @@ footer {
         margin: 0 auto 15px;
     }
 
-    header h1, header p {
+    header h1,
+    header p {
         margin-left: 0;
     }
 
@@ -220,205 +245,214 @@ footer {
 /* -------------------------------------------------------
    PANEL
    ------------------------------------------------------- */
+
+.panel-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.panel-card {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.panel-photo {
+    margin-bottom: 10px;
+}
+
+.panel-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.panel-track {
+    display: inline-block;
+    padding: 5px 11px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    margin-bottom: 5px;
+}
+
+.panel-track.academia {
+    color: #005f73;
+    background: #dff3f5;
+}
+
+.panel-track.national-lab {
+    color: #7b3f00;
+    background: #fff0dc;
+}
+
+.panel-track.industry {
+    color: #5b2a86;
+    background: #eee2f7;
+}
+
+.panel-name {
+    font-size: 22px;
+    margin: 5px 0;
+}
+
+.panel-name a {
+    text-decoration: none;
+}
+
+.panel-name a:hover {
+    text-decoration: underline;
+}
+
+.panel-affiliation {
+    margin: 3px 0 0;
+    color: #555;
+    font-size: 16px;
+}
+
+@media (max-width: 800px) {
+
     .panel-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 25px;
-        margin-top: 25px;
+        grid-template-columns: 1fr;
     }
+}
 
-    .panel-card {
-        text-align: center;
-        padding: 20px;
-        border: 1px solid #e0e0e0;
-        border-radius: 10px;
-        background: #fff;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
+/* -------------------------------------------------------
+   KEYNOTE SPEECH
+   ------------------------------------------------------- */
 
-    .panel-photo {
-        margin-bottom: 10px;
-    }
+.keynote-card {
+    margin-top: 20px;
+    background: #ffffff;
+    border: 1px solid #dfe6e8;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
 
-    .panel-img {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 50%;
-    }
+/* Speaker Header */
 
-    .panel-track {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.6px;
-        margin-bottom: 5px;
-    }
+.keynote-speaker {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 25px 30px;
+    background: linear-gradient(
+        135deg,
+        #f0f8f9 0%,
+        #ffffff 100%
+    );
+    border-bottom: 1px solid #e3eaec;
+}
 
-    .panel-track.academia {
-        color: #005f73;
-        background: #dff3f5;
-    }
+.keynote-photo img {
+    width: 125px;
+    height: 125px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid #ffffff;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+}
 
-    .panel-track.national-lab {
-        color: #7b3f00;
-        background: #fff0dc;
-    }
+.keynote-speaker-info {
+    flex: 1;
+}
 
-    .panel-track.industry {
-        color: #5b2a86;
-        background: #eee2f7;
-    }
+.keynote-speaker-name {
+    font-size: 28px;
+    margin: 0 0 5px;
+}
 
-    .panel-name {
-        font-size: 21px;
-        margin: 5px 0;
-    }
+.keynote-speaker-name a {
+    color: #005f73;
+    text-decoration: none;
+}
 
-    .panel-name a {
-        text-decoration: none;
-    }
+.keynote-speaker-name a:hover {
+    text-decoration: underline;
+}
 
-    .panel-name a:hover {
-        text-decoration: underline;
-    }
+.keynote-affiliation {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+}
 
-    .panel-affiliation {
-        margin: 3px 0 0;
-        color: #555;
-        font-size: 15px;
-    }
+/* Talk Title */
 
-    @media (max-width: 800px) {
-        .panel-grid {
-            grid-template-columns: 1fr;
-        }
-    }
+.keynote-title {
+    margin: 0;
+    padding: 24px 30px;
+    color: #222;
+    font-size: 22px;
+    line-height: 1.5;
+    font-weight: 700;
+    background: #ffffff;
+    border-bottom: 1px solid #e8edef;
+}
 
-    /* ================================
-       Keynote Speech
-       ================================ */
+/* Abstract / Bio */
 
-    .keynote-card {
-        margin-top: 20px;
-        background: #ffffff;
-        border: 1px solid #dfe6e8;
-        border-radius: 14px;
-        overflow: hidden;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    }
+.keynote-section {
+    padding: 22px 30px;
+}
 
-    /* Speaker Header */
+.keynote-section h3 {
+    margin: 0 0 10px;
+    color: #005f73;
+    font-size: 19px;
+    font-weight: 700;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e0f0f2;
+}
+
+.keynote-section p {
+    margin: 0;
+    color: #444;
+    font-size: 16px;
+    line-height: 1.75;
+    text-align: justify;
+}
+
+.keynote-bio {
+    background: #f8fafb;
+    border-top: 1px solid #e8edef;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+
     .keynote-speaker {
-        display: flex;
-        align-items: center;
-        gap: 22px;
-        padding: 25px 30px;
-        background: linear-gradient(
-            135deg,
-            #f0f8f9 0%,
-            #ffffff 100%
-        );
-        border-bottom: 1px solid #e3eaec;
-    }
-
-    .keynote-photo img {
-        width: 125px;
-        height: 125px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 5px solid #ffffff;
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .keynote-speaker-info {
-        flex: 1;
+        flex-direction: column;
+        text-align: center;
+        padding: 25px 20px;
     }
 
     .keynote-speaker-name {
-        font-size: 28px;
-        margin: 0 0 5px;
+        font-size: 24px;
     }
 
-    .keynote-speaker-name a {
-        color: #005f73;
-        text-decoration: none;
-    }
-
-    .keynote-speaker-name a:hover {
-        text-decoration: underline;
-    }
-
-    .keynote-affiliation {
-        margin: 0;
-        font-size: 16px;
-        color: #555;
-    }
-
-    /* Talk Title */
-    .keynote-title {
-        margin: 0;
-        padding: 22px 30px;
-        color: #222;
-        font-size: 21px;
-        line-height: 1.45;
-        font-weight: 700;
-        background: #ffffff;
-        border-bottom: 1px solid #e8edef;
-    }
-
-    /* Abstract / Bio */
+    .keynote-title,
     .keynote-section {
-        padding: 22px 30px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 
-    .keynote-section h3 {
-        margin: 0 0 10px;
-        color: #005f73;
-        font-size: 18px;
-        font-weight: 700;
-        padding-bottom: 6px;
-        border-bottom: 2px solid #e0f0f2;
+    .keynote-title {
+        font-size: 19px;
     }
 
     .keynote-section p {
-        margin: 0;
-        color: #444;
-        font-size: 15px;
+        font-size: 16px;
         line-height: 1.7;
-        text-align: justify;
+        text-align: left;
     }
-
-    .keynote-bio {
-        background: #f8fafb;
-        border-top: 1px solid #e8edef;
-    }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-        .keynote-speaker {
-            flex-direction: column;
-            text-align: center;
-            padding: 25px 20px;
-        }
-
-        .keynote-speaker-name {
-            font-size: 24px;
-        }
-
-        .keynote-title,
-        .keynote-section {
-            padding-left: 20px;
-            padding-right: 20px;
-        }
-
-        .keynote-title {
-            font-size: 19px;
-        }
-
-        .keynote-section p {
-            text-align: left;
-        }
-    }
+}
