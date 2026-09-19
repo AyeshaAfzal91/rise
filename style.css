@@ -1232,3 +1232,359 @@ RESPONSIVE DESIGN
 }
 
 }
+
+/* =========================================================
+   ORGANIZERS
+   ========================================================= */
+
+#Organizers {
+    margin-top: 50px;
+}
+
+
+/* ---------------------------------------------------------
+   GENERAL CHAIR — FEATURED
+   --------------------------------------------------------- */
+
+.general-chair-card {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+
+    margin: 25px 0 45px;
+    padding: 30px;
+
+    background:
+        linear-gradient(135deg, #005f73 0%, #0a7889 55%, #0f8b8d 100%);
+
+    border-radius: 18px;
+
+    color: white;
+
+    box-shadow:
+        0 12px 30px rgba(0, 95, 115, 0.22);
+
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* subtle decorative element */
+.general-chair-card::after {
+    content: "";
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    right: -70px;
+    top: -90px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.08);
+}
+
+
+.general-chair-photo {
+    flex: 0 0 190px;
+
+    position: relative;
+    z-index: 1;
+}
+
+
+.general-chair-photo img {
+    width: 190px;
+    height: 190px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 6px solid white;
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.22);
+}
+
+
+.general-chair-content {
+    position: relative;
+    z-index: 1;
+
+    flex: 1;
+}
+
+
+.organizer-label {
+    display: inline-block;
+
+    padding: 6px 12px;
+
+    margin-bottom: 8px;
+
+    border-radius: 20px;
+
+    background: white;
+    color: #005f73;
+
+    font-size: 0.75rem;
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+}
+
+
+.general-chair-content h3 {
+    margin: 4px 0 6px;
+
+    font-size: 2rem;
+    color: white;
+}
+
+
+.organizer-affiliation {
+    margin: 0 0 15px;
+
+    font-weight: 600;
+
+    color: rgba(255, 255, 255, 0.92);
+}
+
+
+.organizer-description {
+    max-width: 700px;
+
+    line-height: 1.65;
+
+    color: rgba(255, 255, 255, 0.9);
+}
+
+
+.organizer-link {
+    display: inline-block;
+
+    margin-top: 8px;
+
+    color: white;
+    text-decoration: none;
+
+    font-weight: 700;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+
+    transition: all 0.2s ease;
+}
+
+
+.organizer-link:hover {
+    color: #dff6f7;
+    border-bottom-color: white;
+}
+
+
+/* ---------------------------------------------------------
+   PROGRAM CO-CHAIRS
+   --------------------------------------------------------- */
+
+.organizer-subsection {
+    margin-top: 25px;
+}
+
+
+.organizer-section-title {
+    margin-bottom: 20px;
+
+    color: #005f73;
+
+    font-size: 1.4rem;
+}
+
+
+.organizer-panel-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+
+.organizer-card {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    border: 1px solid #dce8eb;
+
+    box-shadow:
+        0 5px 16px rgba(0, 0, 0, 0.07);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.organizer-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+
+.organizer-photo {
+    flex: 0 0 100px;
+}
+
+
+.organizer-photo img {
+    width: 100px;
+    height: 100px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 4px solid #e7f2f4;
+}
+
+
+.organizer-info {
+    min-width: 0;
+}
+
+
+.organizer-track {
+    display: inline-block;
+
+    margin-bottom: 5px;
+
+    font-size: 0.65rem;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    color: #0f8b8d;
+}
+
+
+.organizer-info h3 {
+    margin: 2px 0 7px;
+
+    font-size: 1.05rem;
+
+    line-height: 1.25;
+}
+
+
+.organizer-info h3 a {
+    color: #005f73;
+
+    text-decoration: none;
+}
+
+
+.organizer-info h3 a:hover {
+    text-decoration: underline;
+}
+
+
+.organizer-info p {
+    margin: 0;
+
+    color: #555;
+
+    font-size: 0.9rem;
+
+    line-height: 1.45;
+}
+
+
+/* ---------------------------------------------------------
+   PROGRAM COMMITTEE
+   --------------------------------------------------------- */
+
+.program-committee {
+    margin-top: 30px;
+
+    padding: 18px 22px;
+
+    background: #f4f8f9;
+
+    border-left: 4px solid #0f8b8d;
+
+    border-radius: 8px;
+}
+
+
+.program-committee h3 {
+    margin: 0 0 5px;
+
+    color: #005f73;
+}
+
+
+.program-committee p {
+    margin: 0;
+
+    color: #666;
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    .organizer-panel-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .general-chair-card {
+        flex-direction: column;
+
+        text-align: center;
+
+        padding: 25px 20px;
+    }
+
+
+    .general-chair-photo {
+        flex-basis: auto;
+    }
+
+
+    .general-chair-photo img {
+        width: 160px;
+        height: 160px;
+    }
+
+
+    .general-chair-content h3 {
+        font-size: 1.7rem;
+    }
+
+
+    .organizer-card {
+        align-items: center;
+    }
+
+}
