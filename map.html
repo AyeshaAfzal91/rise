@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RISE Research Expertise Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css">
+<style>
+  :root {
+    --ink: #16213a;
+    --muted: #5a6779;
+    --paper: #ffffff;
+    --mist: #f2f5f9;
+    --line: #d9e0ea;
+    --brand: #16305f;
+    --brand-hover: #0f2347;
+    --c-foundation: #3b7ddd;
+    --c-infra: #1f9d57;
+    --c-apps: #ef8a2b;
+    --c-other: #6b7a90;
+    --heading: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { font-family: var(--body); color: var(--ink); background: var(--paper); font-size: 16px; line-height: 1.45; }
+  button, input, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid #1a5fd0; outline-offset: 2px; }
+
+  .app { display: grid; grid-template-columns: 410px 1fr; height: 100vh; height: 100dvh; }
+  .panel { overflow-y: auto; padding: 22px 20px 28px; border-right: 1px solid var(--line); background: var(--paper); }
+  #map { height: 100%; background: #dfe6ee; }
+
+  h1 { font-family: var(--heading); font-size: 1.7rem; line-height: 1.15; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .lede { margin: 0 0 14px; color: var(--muted); }
+  .btn-primary { display: inline-block; background: var(--brand); color: #fff; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; }
+  .btn-primary:hover { background: var(--brand-hover); }
+  .btn-primary[hidden] { display: none; }
+
+  .notice { margin: 14px 0 0; padding: 10px 12px; border-radius: 8px; background: #fff6df; border: 1px solid #f0d998; font-size: .92rem; }
+  .notice.error { background: #fdeaea; border-color: #f0b4b4; }
+  .notice[hidden] { display: none; }
+
+  .search { margin: 18px 0 12px; }
+  .search input { width: 100%; padding: 10px 12px; border: 1px solid #aeb9c8; border-radius: 8px; background: #fff; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid #aeb9c8; border-radius: 999px; background: #fff; cursor: pointer; }
+  .chip .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c); flex: none; }
+  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  .selects { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .selects label { display: flex; flex-direction: column; gap: 4px; font-size: .88rem; color: var(--muted); }
+  .selects label.wide { grid-column: 1 / -1; }
+  .selects select { padding: 8px 10px; border: 1px solid #aeb9c8; border-radius: 8px; background: #fff; color: var(--ink); }
+
+  .status-row { display: flex; align-items: baseline; justify-content: space-between; margin: 18px 0 8px; }
+  .count { font-weight: 600; }
+  .linkbtn { background: none; border: 0; padding: 4px; color: #1a4fb0; text-decoration: underline; cursor: pointer; }
+  .linkbtn[hidden] { display: none; }
+
+  .people { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .person { display: grid; grid-template-columns: 14px 1fr; gap: 10px; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 12px 4px; cursor: pointer; }
+  .person:hover { background: var(--mist); }
+  .person .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c); margin-top: 6px; }
+  .person .name { font-weight: 600; }
+  .person .meta { color: var(--muted); font-size: .92rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .tag { font-size: .8rem; background: var(--mist); border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; }
+  .empty { padding: 18px 4px; color: var(--muted); }
+
+  .fine { margin-top: 22px; font-size: .86rem; color: var(--muted); }
+
+  /* map markers */
+  .pin span { display: block; width: 18px; height: 18px; border-radius: 50%; background: var(--c); border: 3px solid #fff; box-shadow: 0 1px 5px rgba(0,0,0,.45); }
+  .cl div { width: 38px; height: 38px; border-radius: 50%; background: var(--brand); color: #fff; border: 3px solid #fff; box-shadow: 0 1px 6px rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+
+  /* popup */
+  .leaflet-popup-content { margin: 14px 16px; font-family: var(--body); color: var(--ink); }
+  .pop h2 { font-family: var(--heading); font-size: 1.15rem; margin: 0 0 2px; line-height: 1.2; }
+  .pop p { margin: 2px 0; }
+  .pop .sub { color: var(--muted); }
+  .pop .area { display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; font-weight: 600; }
+  .pop .area .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+  .pop .interest { margin: 8px 0; font-style: italic; }
+  .pop a { color: #1a4fb0; }
+  .pop .similar { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .pop .similar strong { display: block; margin-bottom: 4px; }
+  .pop .sim { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 4px 0; color: #1a4fb0; text-decoration: underline; cursor: pointer; }
+
+  @media (max-width: 820px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: 46dvh 1fr; }
+    #map { order: 1; }
+    .panel { order: 2; border-right: 0; border-top: 1px solid var(--line); padding-top: 16px; }
+    h1 { font-size: 1.4rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="panel" aria-label="Participants and filters">
+    <h1>RISE Research Expertise Map</h1>
+    <p class="lede">Find people to talk to by research area, career stage and place.</p>
+    <a id="addBtn" class="btn-primary" href="#" target="_blank" rel="noopener" hidden>Add yourself to the map</a>
+
+    <p id="demoNote" class="notice" hidden>You are seeing sample data. Set <code>CSV_URL</code> in map.html to show real responses.</p>
+    <p id="errNote" class="notice error" role="alert" hidden>The latest responses could not be loaded. Trying again shortly.</p>
+
+    <div class="search">
+      <label for="q" class="sr" style="position:absolute;left:-9999px">Search people</label>
+      <input id="q" type="search" placeholder="Search name, topic, affiliation or city" autocomplete="off">
+    </div>
+
+    <div class="chips" id="chips" role="group" aria-label="Research area"></div>
+
+    <div class="selects">
+      <label class="wide">Career stage
+        <select id="stage"><option value="">All career stages</option></select>
+      </label>
+      <label>Open to
+        <select id="openTo"><option value="">Anything</option></select>
+      </label>
+      <label>Country
+        <select id="country"><option value="">All countries</option></select>
+      </label>
+    </div>
+
+    <div class="status-row">
+      <span id="count" class="count" aria-live="polite"></span>
+      <button id="clear" class="linkbtn" type="button" hidden>Clear filters</button>
+    </div>
+    <ul id="list" class="people"></ul>
+
+    <p class="fine">Only people who agreed to be listed appear here. Pins mark a city, not an exact location.</p>
+  </aside>
+  <div id="map" role="region" aria-label="World map of participants"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- 1. Settings: edit these ---------- */
+  const CONFIG = {
+    // Link from Google Sheets: File > Share > Publish to web > "Public" tab > CSV
+    CSV_URL: "",
+    // Your Google Form link (the one ending in /viewform)
+    FORM_URL: "",
+    REFRESH_SECONDS: 60
+  };
+
+  // Colors follow the three clusters on the original expertise slide.
+  const CLUSTERS = [
+    { label: "Foundation Models & GenAI", color: "#3b7ddd" },
+    { label: "HPC & AI Infrastructure",   color: "#1f9d57" },
+    { label: "AI Applications & Science", color: "#ef8a2b" }
+  ];
+  const OTHER = { label: "Other", color: "#6b7a90" };
+
+  // Career stages as listed on the RISE workshop site.
+  const STAGES = [
+    "Students & Early Career",
+    "Mid-Career Professionals",
+    "Senior Researchers & Technical Leaders",
+    "Education & Workforce"
+  ];
+  const OPEN_TO = ["Mentoring others", "Looking for a mentor", "Research collaboration"];
+
+  /* ---------- 2. Sample data (only used while CSV_URL is empty) ---------- */
+  const DEMO = [
+    ["Alex Example","Sample University A","PhD student","Students & Early Career","Erlangen","Germany",49.59,11.00,"HPC & AI Infrastructure","GPUs, Performance engineering","Modeling GPU kernel performance","Looking for a mentor",""],
+    ["Bea Example","Sample Research Centre","Research software engineer","Mid-Career Professionals","Erlangen","Germany",49.59,11.00,"HPC & AI Infrastructure","Energy efficiency, GPUs","Energy-aware scheduling","Research collaboration",""],
+    ["Chidi Example","Sample Institute B","Postdoc","Mid-Career Professionals","Nairobi","Kenya",-1.29,36.82,"AI Applications & Science","Climate AI, Digital twins","Climate models on limited hardware","Research collaboration, Looking for a mentor",""],
+    ["Dana Example","Sample Lab C","Senior scientist","Senior Researchers & Technical Leaders","Chicago","United States",41.88,-87.63,"Foundation Models & GenAI","LLMs, Agents, Distributed AI","Scaling agent workflows on HPC","Mentoring others",""],
+    ["Eli Example","Sample Company D","Engineer","Mid-Career Professionals","Chicago","United States",41.88,-87.63,"HPC & AI Infrastructure","Cloud computing, GPUs","Cloud-native HPC","Research collaboration",""],
+    ["Farah Example","Sample University E","Assistant professor","Mid-Career Professionals","Basel","Switzerland",47.56,7.59,"HPC & AI Infrastructure","Scheduling, Energy efficiency","Fair scheduling on shared systems","Mentoring others, Research collaboration",""],
+    ["Gita Example","Sample University F","Master's student","Students & Early Career","Bengaluru","India",12.97,77.59,"Foundation Models & GenAI","LLMs, RAG","Retrieval for scientific text","Looking for a mentor",""],
+    ["Hiro Example","Sample Institute G","Research scientist","Mid-Career Professionals","Tokyo","Japan",35.68,139.69,"AI Applications & Science","Digital twins, Healthcare","Patient-specific simulation","Research collaboration",""],
+    ["Ines Example","Sample University H","Lecturer","Education & Workforce","Sydney","Australia",-33.87,151.21,"AI Applications & Science","Education, Sustainability","Training programs for new HPC users","Mentoring others",""],
+    ["Jonas Example","Sample University I","PhD student","Students & Early Career","Gothenburg","Sweden",57.71,11.97,"Foundation Models & GenAI","Fine-tuning, LLMs","Efficient fine-tuning","Looking for a mentor",""],
+    ["Kemal Example","Sample Lab J","Principal investigator","Senior Researchers & Technical Leaders","Atlanta","United States",33.75,-84.39,"HPC & AI Infrastructure","Sparse computation, GPUs","Sparse linear algebra at scale","Mentoring others",""],
+    ["Lucia Example","Sample University K","Research engineer","Mid-Career Professionals","Sao Paulo","Brazil",-23.55,-46.63,"AI Applications & Science","Climate AI, Distributed AI","Weather downscaling","Research collaboration",""],
+    ["Mo Example","Sample University L","Undergraduate","Students & Early Career","Enschede","Netherlands",52.22,6.89,"HPC & AI Infrastructure","Quantum computing, GPUs","Quantum and classical hybrid workflows","Looking for a mentor",""],
+    ["Noor Example","Sample University M","Postdoc","Mid-Career Professionals","Thuwal","Saudi Arabia",22.31,39.10,"HPC & AI Infrastructure","Performance engineering, Energy efficiency","Mixed-precision solvers","Research collaboration",""]
+  ].map(r => ({ name:r[0], affiliation:r[1], role:r[2], stage:r[3], city:r[4], country:r[5], lat:r[6], lng:r[7], cluster:r[8], tags:r[9], interest:r[10], open_to:r[11], link:r[12] }));
+
+  /* ---------- 3. Helpers ---------- */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = id => document.getElementById(id);
+  const str = v => (v == null ? '' : String(v)).trim();
+  const list = v => str(v).split(/[;,]/).map(s => s.trim()).filter(Boolean);
+  const esc = s => str(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const num = v => parseFloat(str(v).replace(',', '.'));
+
+  function safeUrl(u) {
+    u = str(u);
+    if (!u) return '';
+    try {
+      const url = new URL(/^https?:\/\//i.test(u) ? u : 'https://' + u);
+      return (url.protocol === 'http:' || url.protocol === 'https:') ? url.href : '';
+    } catch (e) { return ''; }
+  }
+  function clusterOf(label) {
+    const key = str(label).toLowerCase();
+    return CLUSTERS.find(c => c.label.toLowerCase() === key) || (key ? { label: str(label), color: OTHER.color } : OTHER);
+  }
+  function toPerson(row) {
+    const lat = num(row.lat), lng = num(row.lng);
+    if (!str(row.name) || !isFinite(lat) || !isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
+    return {
+      name: str(row.name), affiliation: str(row.affiliation), role: str(row.role), stage: str(row.stage),
+      city: str(row.city), country: str(row.country), lat, lng,
+      cluster: clusterOf(row.cluster), tags: list(row.tags), interest: str(row.interest),
+      openTo: list(row.open_to), link: safeUrl(row.link)
+    };
+  }
+
+  /* ---------- 4. Map ---------- */
+  const map = L.map('map', { minZoom: 2, worldCopyJump: true, zoomControl: true }).setView([30, 10], 2);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  }).addTo(map);
+
+  const group = L.markerClusterGroup({
+    showCoverageOnHover: false, maxClusterRadius: 45, animate: !reduceMotion, spiderfyOnMaxZoom: true,
+    iconCreateFunction: c => L.divIcon({ html: '<div>' + c.getChildCount() + '</div>', className: 'cl', iconSize: L.point(38, 38) })
+  });
+  map.addLayer(group);
+
+  /* ---------- 5. State and rendering ---------- */
+  let people = [], markers = [], visible = new Set(), firstFit = true;
+  const filters = { q: '', clusters: new Set(), stage: '', openTo: '', country: '' };
+
+  function matches(p) {
+    if (filters.clusters.size && !filters.clusters.has(p.cluster.label)) return false;
+    if (filters.stage && p.stage !== filters.stage) return false;
+    if (filters.openTo && !p.openTo.includes(filters.openTo)) return false;
+    if (filters.country && p.country !== filters.country) return false;
+    if (filters.q) {
+      const hay = [p.name, p.affiliation, p.role, p.city, p.country, p.tags.join(' '), p.interest, p.cluster.label].join(' ').toLowerCase();
+      if (!filters.q.toLowerCase().split(/\s+/).every(w => hay.includes(w))) return false;
+    }
+    return true;
+  }
+  const isFiltered = () => filters.q || filters.clusters.size || filters.stage || filters.openTo || filters.country;
+
+  function fillSelect(id, values, current) {
+    const sel = $(id), first = sel.options[0];
+    sel.innerHTML = '';
+    sel.appendChild(first);
+    values.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o); });
+    sel.value = values.includes(current) ? current : '';
+    return sel.value;
+  }
+
+  function buildOptions() {
+    const stages = STAGES.concat([...new Set(people.map(p => p.stage).filter(s => s && !STAGES.includes(s)))]);
+    const opens = OPEN_TO.concat([...new Set(people.flatMap(p => p.openTo).filter(s => !OPEN_TO.includes(s)))]);
+    const countries = [...new Set(people.map(p => p.country).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    filters.stage = fillSelect('stage', stages, filters.stage);
+    filters.openTo = fillSelect('openTo', opens, filters.openTo);
+    filters.country = fillSelect('country', countries, filters.country);
+  }
+
+  function buildChips() {
+    const present = new Set(people.map(p => p.cluster.label));
+    const all = CLUSTERS.concat(present.has(OTHER.label) || [...present].some(l => !CLUSTERS.find(c => c.label === l)) ? [OTHER] : []);
+    $('chips').innerHTML = all.map(c =>
+      '<button type="button" class="chip" style="--c:' + c.color + '" data-label="' + esc(c.label) + '" aria-pressed="' + filters.clusters.has(c.label) + '"><span class="dot"></span>' + esc(c.label) + '</button>'
+    ).join('');
+  }
+
+  function popupHtml(i) {
+    const p = people[i];
+    const shared = people.map((o, j) => {
+      if (j === i) return null;
+      const n = o.tags.filter(t => p.tags.some(x => x.toLowerCase() === t.toLowerCase())).length;
+      const score = n + (o.cluster.label === p.cluster.label ? 0.5 : 0);
+      return n > 0 ? { j, score } : null;
+    }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 3);
+
+    return '<div class="pop">' +
+      '<h2>' + esc(p.name) + '</h2>' +
+      (p.role ? '<p>' + esc(p.role) + '</p>' : '') +
+      (p.affiliation ? '<p class="sub">' + esc(p.affiliation) + '</p>' : '') +
+      '<p class="sub">' + esc([p.city, p.country].filter(Boolean).join(', ')) + '</p>' +
+      '<p class="area" style="--c:' + p.cluster.color + '"><span class="dot"></span>' + esc(p.cluster.label) + '</p>' +
+      (p.stage ? '<p class="sub">' + esc(p.stage) + '</p>' : '') +
+      (p.interest ? '<p class="interest">' + esc(p.interest) + '</p>' : '') +
+      (p.tags.length ? '<div class="tags">' + p.tags.map(t => '<span class="tag">' + esc(t) + '</span>').join('') + '</div>' : '') +
+      (p.openTo.length ? '<p style="margin-top:8px"><strong>Open to:</strong> ' + esc(p.openTo.join(', ')) + '</p>' : '') +
+      (p.link ? '<p><a href="' + esc(p.link) + '" target="_blank" rel="noopener noreferrer">Website or profile</a></p>' : '') +
+      (shared.length ? '<div class="similar"><strong>Shares interests with</strong>' +
+        shared.map(s => '<button type="button" class="sim" data-id="' + s.j + '">' + esc(people[s.j].name) + ', ' + esc(people[s.j].city) + '</button>').join('') + '</div>' : '') +
+      '</div>';
+  }
+
+  function render(fit) {
+    visible = new Set();
+    people.forEach((p, i) => { if (matches(p)) visible.add(i); });
+    const ids = [...visible];
+
+    group.clearLayers();
+    group.addLayers(ids.map(i => markers[i]));
+
+    const countries = new Set(ids.map(i => people[i].country).filter(Boolean)).size;
+    $('count').textContent = !people.length ? 'No one on the map yet'
+      : isFiltered() ? ids.length + ' of ' + people.length + ' people match'
+      : people.length + (people.length === 1 ? ' person' : ' people') + ' in ' + countries + (countries === 1 ? ' country' : ' countries');
+    $('clear').hidden = !isFiltered();
+
+    const sorted = ids.slice().sort((a, b) => people[a].name.localeCompare(people[b].name));
+    $('list').innerHTML = sorted.length ? sorted.map(i => {
+      const p = people[i];
+      return '<li><button type="button" class="person" data-id="' + i + '" style="--c:' + p.cluster.color + '"><span class="dot"></span><span>' +
+        '<span class="name">' + esc(p.name) + '</span><br>' +
+        '<span class="meta">' + esc([p.affiliation, p.city].filter(Boolean).join(', ')) + '</span>' +
+        (p.tags.length ? '<span class="tags">' + p.tags.slice(0, 4).map(t => '<span class="tag">' + esc(t) + '</span>').join('') + '</span>' : '') +
+        '</span></button></li>';
+    }).join('') : '<li class="empty">' + (people.length
+      ? 'No one matches these filters yet. Clear a filter or add yourself.'
+      : 'The map is empty so far. Be the first to add yourself.') + '</li>';
+
+    if (fit && ids.length) {
+      map.fitBounds(L.latLngBounds(ids.map(i => [people[i].lat, people[i].lng])), { padding: [40, 40], maxZoom: 5, animate: !reduceMotion });
+    }
+  }
+
+  function setPeople(arr) {
+    people = arr;
+    markers = people.map((p, i) => L.marker([p.lat, p.lng], {
+      title: p.name, alt: p.name,
+      icon: L.divIcon({ className: 'pin', html: '<span style="--c:' + p.cluster.color + '"></span>', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] })
+    }).bindPopup(() => popupHtml(i), { maxWidth: 300 }));
+    buildOptions();
+    buildChips();
+    render(firstFit);
+    if (people.length) firstFit = false;
+  }
+
+  function focusPerson(i) {
+    if (!visible.has(i)) { resetFilters(); render(false); }
+    const m = markers[i];
+    map.setView(m.getLatLng(), Math.max(map.getZoom(), 6), { animate: !reduceMotion });
+    group.zoomToShowLayer(m, () => m.openPopup());
+  }
+
+  function resetFilters() {
+    filters.q = ''; filters.clusters.clear(); filters.stage = ''; filters.openTo = ''; filters.country = '';
+    $('q').value = ''; $('stage').value = ''; $('openTo').value = ''; $('country').value = '';
+    buildChips();
+  }
+
+  /* ---------- 6. Events ---------- */
+  let timer;
+  $('q').addEventListener('input', e => { clearTimeout(timer); timer = setTimeout(() => { filters.q = e.target.value.trim(); render(true); }, 150); });
+  ['stage', 'openTo', 'country'].forEach(id => $(id).addEventListener('change', e => { filters[id] = e.target.value; render(true); }));
+  $('chips').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    const l = b.dataset.label;
+    filters.clusters.has(l) ? filters.clusters.delete(l) : filters.clusters.add(l);
+    b.setAttribute('aria-pressed', filters.clusters.has(l));
+    render(true);
+  });
+  $('clear').addEventListener('click', () => { resetFilters(); render(true); });
+  $('list').addEventListener('click', e => { const b = e.target.closest('.person'); if (b) focusPerson(+b.dataset.id); });
+  map.on('popupopen', e => {
+    e.popup.getElement().querySelectorAll('.sim').forEach(b => b.addEventListener('click', () => focusPerson(+b.dataset.id)));
+  });
+
+  /* ---------- 7. Load data ---------- */
+  if (CONFIG.FORM_URL) { const a = $('addBtn'); a.href = CONFIG.FORM_URL; a.hidden = false; }
+
+  async function load() {
+    if (!CONFIG.CSV_URL) { $('demoNote').hidden = false; setPeople(DEMO.map(toPerson).filter(Boolean)); return; }
+    try {
+      const sep = CONFIG.CSV_URL.includes('?') ? '&' : '?';
+      const res = await fetch(CONFIG.CSV_URL + sep + 't=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const parsed = Papa.parse(await res.text(), { header: true, skipEmptyLines: true, transformHeader: h => h.trim().toLowerCase() });
+      const next = parsed.data.map(toPerson).filter(Boolean);
+      const sig = JSON.stringify(next.map(p => [p.name, p.lat, p.lng, p.tags, p.cluster.label, p.interest]));
+      if (sig !== load.last) { load.last = sig; setPeople(next); }
+      $('errNote').hidden = true;
+    } catch (err) {
+      console.error(err);
+      $('errNote').hidden = false;
+    }
+  }
+  load();
+  if (CONFIG.CSV_URL) setInterval(load, CONFIG.REFRESH_SECONDS * 1000);
+})();
+</script>
+</body>
+</html>
