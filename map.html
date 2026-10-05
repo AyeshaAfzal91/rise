@@ -92,6 +92,12 @@
   .pop .similar strong { display: block; margin-bottom: 4px; }
   .pop .sim { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 4px 0; color: #1a4fb0; text-decoration: underline; cursor: pointer; }
 
+  /* projector view: map.html?present */
+  .qr-card { background: #fff; padding: 14px 14px 10px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.25); text-align: center; }
+  .qr-card #qr img, .qr-card #qr canvas { display: block; margin: 0 auto; }
+  .qr-card p { margin: 8px 0 0; font-family: var(--heading); font-weight: 700; font-size: 1.1rem; color: var(--ink); }
+  .present .count { font-size: 1.25rem; }
+
   @media (max-width: 820px) {
     .app { grid-template-columns: 1fr; grid-template-rows: 46dvh 1fr; }
     #map { order: 1; }
@@ -146,17 +152,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 (function () {
   'use strict';
 
   /* ---------- 1. Settings: edit these ---------- */
   const CONFIG = {
-    // Link from Google Sheets: File > Share > Publish to web > "Public" tab > CSV
+    // Web app URL from Apps Script (ends in /exec). A "Publish to web" CSV link also works.
     CSV_URL: "",
     // Your Google Form link (the one ending in /viewform)
     FORM_URL: "",
-    REFRESH_SECONDS: 60
+    REFRESH_SECONDS: 60,
+    // Faster refresh when the page is opened as map.html?present (projector view with QR code)
+    PRESENT_REFRESH_SECONDS: 15
   };
 
   // Colors follow the three clusters on the original expertise slide.
@@ -382,6 +391,22 @@
   /* ---------- 7. Load data ---------- */
   if (CONFIG.FORM_URL) { const a = $('addBtn'); a.href = CONFIG.FORM_URL; a.hidden = false; }
 
+  const present = new URLSearchParams(location.search).has('present');
+  if (present) {
+    document.body.classList.add('present');
+    if (CONFIG.FORM_URL && window.QRCode) {
+      const qr = L.control({ position: 'bottomright' });
+      qr.onAdd = () => {
+        const d = L.DomUtil.create('div', 'qr-card');
+        d.innerHTML = '<div id="qr" role="img" aria-label="QR code that opens the form"></div><p>Scan to add yourself</p>';
+        new QRCode(d.querySelector('#qr'), { text: CONFIG.FORM_URL, width: 190, height: 190, correctLevel: QRCode.CorrectLevel.M });
+        L.DomEvent.disableClickPropagation(d);
+        return d;
+      };
+      qr.addTo(map);
+    }
+  }
+
   async function load() {
     if (!CONFIG.CSV_URL) { $('demoNote').hidden = false; setPeople(DEMO.map(toPerson).filter(Boolean)); return; }
     try {
@@ -399,7 +424,7 @@
     }
   }
   load();
-  if (CONFIG.CSV_URL) setInterval(load, CONFIG.REFRESH_SECONDS * 1000);
+  if (CONFIG.CSV_URL) setInterval(load, (present ? CONFIG.PRESENT_REFRESH_SECONDS : CONFIG.REFRESH_SECONDS) * 1000);
 })();
 </script>
 </body>
