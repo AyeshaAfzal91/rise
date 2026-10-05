@@ -203,6 +203,9 @@
   .toast.show { transform: translate(-50%, 0); opacity: 1; }
   .toast .avatar { width: 32px; height: 32px; font-size: .78rem; }
 
+  /* Softer basemap so the colored pins stand out */
+  .soft-tiles { filter: grayscale(.85) contrast(.92) brightness(1.06); }
+
   /* Pins and clusters */
   .pin {
     position: relative; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff;
@@ -409,7 +412,10 @@
     FORM_URL: "https://docs.google.com/forms/d/e/1FAIpQLSeO3amaHIh_grxtdJdC0PTYrRwCSwTXQ_AI4Nq47HQrGl_HkQ/viewform",
     REFRESH_SECONDS: 30,
     PRESENT_REFRESH_SECONDS: 15,      // map.html?present: projector view
-    SPOTLIGHT_SECONDS: 12             // projector view: open the next person's card every n seconds (0 = off)
+    SPOTLIGHT_SECONDS: 12,            // projector view: open the next person's card every n seconds (0 = off)
+    // Optional. Free key from https://carto.com/basemaps/apikey gives the softer CARTO map style.
+    // Leave empty to use OpenStreetMap, which needs no key.
+    CARTO_KEY: ""
   };
 
   // Main expertise areas = SC paper track titles. "label" must match the Form exactly.
@@ -522,10 +528,17 @@
   /* ================= 5. Map ================= */
   const map = L.map('map', { minZoom: 2, worldCopyJump: true, zoomControl: false }).setView([30, 0], 2);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 18, subdomains: 'abcd',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-  }).addTo(map);
+  const OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+  if (CONFIG.CARTO_KEY) {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=' + encodeURIComponent(CONFIG.CARTO_KEY), {
+      maxZoom: 18, subdomains: 'abcd', attribution: OSM_ATTR + ' &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    }).addTo(map);
+  } else {
+    // Standard OpenStreetMap tiles, softened with CSS so the colored pins stand out.
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, attribution: OSM_ATTR, className: 'soft-tiles'
+    }).addTo(map);
+  }
 
   // Groups are drawn as rings that show the mix of expertise areas inside.
   const group = L.markerClusterGroup({
