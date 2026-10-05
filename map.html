@@ -2,151 +2,395 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RISE Research Expertise Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RISE 2026 Research Expertise Map</title>
+<meta name="description" content="Find people to meet at RISE 2026, the 1st International Workshop on Rising Innovators in Sustainable Exacomputing at SC26.">
+<link rel="icon" href="assets/RISE-logo-2026-compressed.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css">
 <style>
   :root {
-    --ink: #16213a;
-    --muted: #5a6779;
+    /* Sampled from the RISE 2026 logo and the workshop site */
+    --navy: #003b5d;
+    --navy-deep: #00283f;
+    --teal: #005f73;
+    --turquoise: #0a9396;
+    --orange: #fb8d42;
+    --orange-deep: #e8722a;
+    --leaf: #76ba27;
+    --ink: #102a3c;
+    --muted: #55687a;
+    --line: #dbe4eb;
+    --wash: #f2f6f8;
     --paper: #ffffff;
-    --mist: #f2f5f9;
-    --line: #d9e0ea;
-    --brand: #16305f;
-    --brand-hover: #0f2347;
-    --c-foundation: #3b7ddd;
-    --c-infra: #1f9d57;
-    --c-apps: #ef8a2b;
-    --c-other: #6b7a90;
-    --heading: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-    --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+    --rise: linear-gradient(90deg, var(--orange) 0%, #e9b23a 45%, var(--leaf) 100%);
+    --display: "Outfit", "Segoe UI", system-ui, sans-serif;
+    --body: "Roboto", "Segoe UI", system-ui, sans-serif;
+    --panel-w: 430px;
+    --header-h: 76px;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
-  body { font-family: var(--body); color: var(--ink); background: var(--paper); font-size: 16px; line-height: 1.45; }
+  body { font-family: var(--body); color: var(--ink); background: var(--wash); font-size: 15.5px; line-height: 1.5; }
   button, input, select { font: inherit; color: inherit; }
-  :focus-visible { outline: 3px solid #1a5fd0; outline-offset: 2px; }
+  :focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  [hidden] { display: none !important; }
 
-  .app { display: grid; grid-template-columns: 410px 1fr; height: 100vh; height: 100dvh; }
-  .panel { overflow-y: auto; padding: 22px 20px 28px; border-right: 1px solid var(--line); background: var(--paper); }
-  #map { height: 100%; background: #dfe6ee; }
+  /* ---------- Header ---------- */
+  .top {
+    height: var(--header-h); display: flex; align-items: center; gap: 18px;
+    padding: 0 22px;
+    background: linear-gradient(115deg, var(--navy-deep) 0%, var(--navy) 45%, var(--teal) 100%);
+    color: #fff; position: relative; z-index: 1001;
+  }
+  .top::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--rise); }
+  .brand { flex: none; display: block; background: #fff; border-radius: 10px; padding: 3px 6px; line-height: 0; }
+  .brand img { height: 52px; width: auto; }
+  .titles { min-width: 0; flex: 1; }
+  .titles h1 { font-family: var(--display); font-weight: 700; font-size: 1.55rem; line-height: 1.1; margin: 0; letter-spacing: -0.01em; }
+  .titles p { margin: 3px 0 0; opacity: .85; font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .titles a { color: inherit; text-decoration: underline; text-decoration-color: rgba(255,255,255,.45); text-underline-offset: 3px; }
+  .live { display: flex; align-items: center; gap: 8px; font-size: .88rem; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.1); white-space: nowrap; }
+  .live-dot { width: 9px; height: 9px; border-radius: 50%; background: #b8c4cf; flex: none; }
+  .live.ok .live-dot { background: var(--leaf); animation: beat 2.2s infinite; }
+  .live.err .live-dot { background: var(--orange); }
+  @keyframes beat { 0% { box-shadow: 0 0 0 0 rgba(118,186,39,.65); } 70% { box-shadow: 0 0 0 9px rgba(118,186,39,0); } 100% { box-shadow: 0 0 0 0 rgba(118,186,39,0); } }
+  .cta {
+    display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    background: linear-gradient(135deg, var(--orange), var(--orange-deep)); color: #fff; text-decoration: none;
+    font-weight: 700; padding: 11px 18px; border-radius: 999px; box-shadow: 0 6px 18px rgba(232,114,42,.35);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .cta:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(232,114,42,.45); }
+  .cta svg { width: 18px; height: 18px; }
 
-  h1 { font-family: var(--heading); font-size: 1.7rem; line-height: 1.15; margin: 0 0 6px; letter-spacing: -0.01em; }
-  .lede { margin: 0 0 14px; color: var(--muted); }
-  .btn-primary { display: inline-block; background: var(--brand); color: #fff; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; }
-  .btn-primary:hover { background: var(--brand-hover); }
-  .btn-primary[hidden] { display: none; }
+  /* ---------- Layout ---------- */
+  .app { display: grid; grid-template-columns: var(--panel-w) 1fr; height: calc(100vh - var(--header-h)); height: calc(100dvh - var(--header-h)); }
+  .panel { display: flex; flex-direction: column; min-height: 0; background: var(--paper); border-right: 1px solid var(--line); }
+  .stagewrap { position: relative; min-height: 0; }
+  #map { position: absolute; inset: 0; background: #dfe8ee; }
 
-  .notice { margin: 14px 0 0; padding: 10px 12px; border-radius: 8px; background: #fff6df; border: 1px solid #f0d998; font-size: .92rem; }
-  .notice.error { background: #fdeaea; border-color: #f0b4b4; }
-  .notice[hidden] { display: none; }
+  /* ---------- Tabs ---------- */
+  .tabs { display: flex; gap: 4px; padding: 12px 14px 0; border-bottom: 1px solid var(--line); flex: none; }
+  .tab {
+    flex: 1; background: none; border: 0; padding: 10px 6px 12px; cursor: pointer; color: var(--muted);
+    font-family: var(--display); font-weight: 600; font-size: 1rem; border-bottom: 3px solid transparent; margin-bottom: -1px;
+  }
+  .tab[aria-selected="true"] { color: var(--navy); border-bottom-color: var(--orange); }
+  .tab:hover { color: var(--navy); }
+  .tabpane { flex: 1; overflow-y: auto; padding: 16px 18px 24px; min-height: 0; }
 
-  .search { margin: 18px 0 12px; }
-  .search input { width: 100%; padding: 10px 12px; border: 1px solid #aeb9c8; border-radius: 8px; background: #fff; }
+  .notice { margin: 0 0 14px; padding: 10px 12px; border-radius: 10px; background: #fff4e6; border: 1px solid #f7c99f; font-size: .9rem; }
+  .notice.error { background: #fdeceb; border-color: #f2b8b4; }
 
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid #aeb9c8; border-radius: 999px; background: #fff; cursor: pointer; }
-  .chip .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c); flex: none; }
-  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  /* ---------- People tab ---------- */
+  .search { position: relative; margin-bottom: 12px; }
+  .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--muted); }
+  .search input { width: 100%; padding: 11px 12px 11px 38px; border: 1px solid #b9c7d3; border-radius: 12px; background: #fff; }
+  .search input:focus { border-color: var(--teal); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border: 1px solid #c7d3dd;
+    border-radius: 999px; background: #fff; cursor: pointer; font-size: .86rem; line-height: 1.3;
+  }
+  .chip .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
+  .chip .n { color: var(--muted); font-size: .8rem; }
+  .chip[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .chip[aria-pressed="true"] .n { color: rgba(255,255,255,.7); }
 
   .selects { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .selects label { display: flex; flex-direction: column; gap: 4px; font-size: .88rem; color: var(--muted); }
-  .selects label.wide { grid-column: 1 / -1; }
-  .selects select { padding: 8px 10px; border: 1px solid #aeb9c8; border-radius: 8px; background: #fff; color: var(--ink); }
+  .selects label { display: flex; flex-direction: column; gap: 4px; font-size: .84rem; color: var(--muted); }
+  .selects .wide { grid-column: 1 / -1; }
+  select { padding: 9px 10px; border: 1px solid #b9c7d3; border-radius: 10px; background: #fff; color: var(--ink); width: 100%; }
 
-  .status-row { display: flex; align-items: baseline; justify-content: space-between; margin: 18px 0 8px; }
-  .count { font-weight: 600; }
-  .linkbtn { background: none; border: 0; padding: 4px; color: #1a4fb0; text-decoration: underline; cursor: pointer; }
-  .linkbtn[hidden] { display: none; }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 18px 0 6px; }
+  .count { font-family: var(--display); font-weight: 600; font-size: 1.05rem; }
+  .linkbtn { background: none; border: 0; padding: 4px; color: var(--teal); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-size: .9rem; }
+  .sort { width: auto; padding: 5px 8px; font-size: .86rem; }
+  .matchflag { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #eef7e3; border: 1px solid #cfe6b2; border-radius: 10px; padding: 7px 10px; font-size: .9rem; margin-top: 10px; }
 
-  .people { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-  .person { display: grid; grid-template-columns: 14px 1fr; gap: 10px; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 12px 4px; cursor: pointer; }
-  .person:hover { background: var(--mist); }
-  .person .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c); margin-top: 6px; }
-  .person .name { font-weight: 600; }
-  .person .meta { color: var(--muted); font-size: .92rem; }
-  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
-  .tag { font-size: .8rem; background: var(--mist); border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; }
-  .empty { padding: 18px 4px; color: var(--muted); }
+  .people { list-style: none; margin: 0; padding: 0; }
+  .person {
+    display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; width: 100%; text-align: left;
+    background: none; border: 0; border-bottom: 1px solid var(--line); padding: 11px 6px; cursor: pointer;
+  }
+  .person:hover { background: var(--wash); }
+  .avatar {
+    width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-family: var(--display);
+    font-weight: 700; font-size: .95rem; background: var(--c); box-shadow: inset 0 0 0 2px rgba(255,255,255,.35); flex: none;
+  }
+  .person .name { font-weight: 700; display: block; }
+  .meta { color: var(--muted); font-size: .88rem; display: block; line-height: 1.35; }
+  .person .stg { font-size: 1.15rem; }
+  .fresh { display: inline-block; margin-left: 6px; font-size: .72rem; font-weight: 700; color: #fff; background: var(--leaf); border-radius: 999px; padding: 1px 7px; vertical-align: 2px; }
+  .empty { padding: 22px 6px; color: var(--muted); }
 
-  .fine { margin-top: 22px; font-size: .86rem; color: var(--muted); }
+  /* ---------- Insights tab ---------- */
+  .ins h3 { font-family: var(--display); font-size: 1.05rem; margin: 22px 0 10px; color: var(--navy); }
+  .ins h3:first-child { margin-top: 2px; }
+  .hbar { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; width: 100%; background: none; border: 0; padding: 6px 0; text-align: left; cursor: pointer; }
+  .hbar .lbl { font-size: .9rem; }
+  .hbar .val { font-weight: 700; font-size: .9rem; }
+  .hbar .track { grid-column: 1 / -1; height: 8px; border-radius: 99px; background: var(--wash); overflow: hidden; }
+  .hbar .fill { display: block; height: 100%; border-radius: 99px; background: var(--c, var(--teal)); width: var(--w); transition: width .6s ease; }
+  .hbar:hover .lbl { text-decoration: underline; }
+  .stages { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stagecard { text-align: left; background: var(--wash); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
+  .stagecard:hover { border-color: var(--teal); }
+  .stagecard .ic { font-size: 1.3rem; }
+  .stagecard b { display: block; font-family: var(--display); font-size: 1.5rem; line-height: 1.1; margin-top: 2px; color: var(--navy); }
+  .stagecard .l { font-size: .82rem; color: var(--muted); line-height: 1.25; display: block; }
+  .cloud { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: baseline; }
+  .cloud button { background: none; border: 0; padding: 2px 4px; cursor: pointer; color: var(--teal); font-weight: 500; font-size: var(--s); line-height: 1.25; }
+  .cloud button:hover { color: var(--orange-deep); text-decoration: underline; }
+  .opens { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .opens button { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px; cursor: pointer; text-align: center; }
+  .opens button:hover { border-color: var(--teal); }
+  .opens b { display: block; font-family: var(--display); font-size: 1.5rem; color: var(--navy); }
+  .opens span { font-size: .8rem; color: var(--muted); line-height: 1.2; display: block; }
 
-  /* map markers */
-  .pin span { display: block; width: 18px; height: 18px; border-radius: 50%; background: var(--c); border: 3px solid #fff; box-shadow: 0 1px 5px rgba(0,0,0,.45); }
-  .cl div { width: 38px; height: 38px; border-radius: 50%; background: var(--brand); color: #fff; border: 3px solid #fff; box-shadow: 0 1px 6px rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  /* ---------- Who to meet tab ---------- */
+  .lede { color: var(--muted); margin: 0 0 14px; }
+  .field { margin-bottom: 14px; }
+  .field > .lab { display: block; font-weight: 700; font-size: .92rem; margin-bottom: 6px; }
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid #b9c7d3; border-radius: 12px; overflow: hidden; position: relative; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg label { text-align: center; padding: 9px 4px; cursor: pointer; font-size: .88rem; border-left: 1px solid #d3dde5; }
+  .seg label:first-of-type { border-left: 0; }
+  .seg input:checked + label { background: var(--navy); color: #fff; }
+  .seg input:focus-visible + label { outline: 3px solid var(--orange); outline-offset: -3px; }
+  .tagpick { max-height: 190px; overflow-y: auto; padding: 2px; }
+  .results { list-style: none; padding: 0; margin: 8px 0 0; }
+  .result { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; width: 100%; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; }
+  .result:hover { border-color: var(--teal); box-shadow: 0 4px 14px rgba(0,59,93,.08); }
+  .why { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .why span { font-size: .75rem; background: #eef7e3; color: #335d0b; border-radius: 999px; padding: 1px 8px; }
+  .score { font-family: var(--display); font-weight: 800; color: var(--orange-deep); font-size: 1.05rem; }
 
-  /* popup */
-  .leaflet-popup-content { margin: 14px 16px; font-family: var(--body); color: var(--ink); }
-  .pop h2 { font-family: var(--heading); font-size: 1.15rem; margin: 0 0 2px; line-height: 1.2; }
-  .pop p { margin: 2px 0; }
-  .pop .sub { color: var(--muted); }
-  .pop .area { display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; font-weight: 600; }
-  .pop .area .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
-  .pop .interest { margin: 8px 0; font-style: italic; }
-  .pop a { color: #1a4fb0; }
-  .pop .similar { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
-  .pop .similar strong { display: block; margin-bottom: 4px; }
-  .pop .sim { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 4px 0; color: #1a4fb0; text-decoration: underline; cursor: pointer; }
+  .fine { flex: none; margin: 0; padding: 10px 18px 12px; font-size: .8rem; color: var(--muted); border-top: 1px solid var(--line); background: var(--paper); }
+  .fine a { color: var(--teal); }
 
-  /* projector view: map.html?present */
-  .qr-card { background: #fff; padding: 14px 14px 10px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.25); text-align: center; }
-  .qr-card #qr img, .qr-card #qr canvas { display: block; margin: 0 auto; }
-  .qr-card p { margin: 8px 0 0; font-family: var(--heading); font-weight: 700; font-size: 1.1rem; color: var(--ink); }
-  .present .count { font-size: 1.25rem; }
+  /* ---------- Map overlays ---------- */
+  .stats {
+    position: absolute; z-index: 500; top: 14px; left: 14px; display: flex;
+    background: rgba(255,255,255,.95); border-radius: 16px; box-shadow: 0 6px 24px rgba(0,40,63,.16); padding: 6px;
+  }
+  .stat { padding: 6px 14px; }
+  .stat + .stat { border-left: 1px solid var(--line); }
+  .stat b { display: block; font-family: var(--display); font-weight: 800; font-size: 1.6rem; line-height: 1.05; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .stat span { font-size: .78rem; color: var(--muted); }
 
-  @media (max-width: 820px) {
-    .app { grid-template-columns: 1fr; grid-template-rows: 46dvh 1fr; }
-    #map { order: 1; }
-    .panel { order: 2; border-right: 0; border-top: 1px solid var(--line); padding-top: 16px; }
-    h1 { font-size: 1.4rem; }
+  .legend {
+    position: absolute; z-index: 500; left: 14px; bottom: 26px; background: rgba(255,255,255,.96); border-radius: 14px;
+    box-shadow: 0 6px 24px rgba(0,40,63,.16); padding: 10px 12px; max-width: 300px; font-size: .82rem;
+  }
+  .legend summary { cursor: pointer; font-weight: 700; font-family: var(--display); font-size: .92rem; color: var(--navy); }
+  .legend ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+  .legend li { display: flex; align-items: center; gap: 8px; }
+  .legend li i { width: 11px; height: 11px; border-radius: 50%; background: var(--c); flex: none; }
+  .legend .hint { margin: 8px 0 0; color: var(--muted); }
+
+  .toast {
+    position: absolute; z-index: 700; left: 50%; top: 16px; transform: translate(-50%, -160%); opacity: 0;
+    background: var(--navy); color: #fff; padding: 8px 18px 8px 8px; border-radius: 999px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 10px 30px rgba(0,40,63,.35); transition: transform .35s ease, opacity .35s ease; max-width: calc(100% - 32px);
+  }
+  .toast.show { transform: translate(-50%, 0); opacity: 1; }
+  .toast .avatar { width: 32px; height: 32px; font-size: .78rem; }
+
+  /* Pins and clusters */
+  .pin {
+    position: relative; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff;
+    font: 700 11px/1 var(--display); border: 2.5px solid #fff; box-shadow: 0 2px 8px rgba(0,40,63,.45); transition: transform .15s ease;
+  }
+  .leaflet-marker-icon:hover .pin { transform: scale(1.15); }
+  .pin.new::after { content: ""; position: absolute; inset: -7px; border-radius: 50%; border: 3px solid var(--leaf); animation: ring 1.6s ease-out infinite; }
+  .pin.sel { transform: scale(1.25); box-shadow: 0 0 0 4px rgba(251,141,66,.6), 0 2px 8px rgba(0,40,63,.45); }
+  @keyframes ring { from { transform: scale(.8); opacity: 1; } to { transform: scale(1.9); opacity: 0; } }
+  .donut { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 3px 12px rgba(0,40,63,.4); }
+  .donut span { width: 64%; height: 64%; border-radius: 50%; background: #fff; display: grid; place-items: center; font: 800 14px/1 var(--display); color: var(--navy); }
+
+  /* Connection arcs between people who should meet */
+  .arc { stroke-dasharray: 7 7; animation: flow 1.2s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -14; } }
+
+  /* Person card */
+  .leaflet-popup-content-wrapper { border-radius: 18px; padding: 0; box-shadow: 0 14px 40px rgba(0,40,63,.25); overflow: hidden; }
+  .leaflet-popup-content { margin: 0; width: 320px !important; font-family: var(--body); color: var(--ink); font-size: .92rem; line-height: 1.45; }
+  .leaflet-container a.leaflet-popup-close-button { color: #fff; top: 8px; right: 8px; font-size: 22px; }
+  .card-hd { background: linear-gradient(120deg, var(--navy), var(--teal)); color: #fff; padding: 16px 16px 14px; display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: center; position: relative; }
+  .card-hd::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--c); }
+  .card-hd .avatar { width: 52px; height: 52px; font-size: 1.1rem; border: 2px solid #fff; }
+  .card-hd h2 { font-family: var(--display); font-size: 1.2rem; margin: 0; line-height: 1.15; padding-right: 18px; }
+  .card-hd p { margin: 2px 0 0; opacity: .88; font-size: .86rem; }
+  .card-bd { padding: 12px 16px 14px; }
+  .card-bd p { margin: 0 0 6px; }
+  .area { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+  .area i { width: 11px; height: 11px; border-radius: 50%; background: var(--c); flex: none; }
+  .row { display: flex; gap: 8px; align-items: baseline; color: var(--muted); font-size: .88rem; }
+  .quote { margin: 10px 0 !important; padding-left: 10px; border-left: 3px solid var(--orange); font-style: italic; }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
+  .tag { font-size: .78rem; background: var(--wash); border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 8px; }
+  .badge { font-size: .78rem; font-weight: 700; color: var(--teal); border: 1.5px solid var(--turquoise); border-radius: 999px; padding: 1px 9px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 4px; }
+  .actions a, .actions button { color: var(--teal); font-weight: 700; font-size: .88rem; background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .meet { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .meet strong { display: block; font-family: var(--display); color: var(--navy); margin-bottom: 4px; }
+  .meet button { display: grid; grid-template-columns: 28px 1fr; gap: 9px; align-items: center; width: 100%; text-align: left; background: none; border: 0; padding: 5px 0; cursor: pointer; }
+  .meet button .avatar { width: 28px; height: 28px; font-size: .68rem; }
+  .meet button b { color: var(--teal); }
+  .meet button small { display: block; color: var(--muted); font-size: .78rem; }
+
+  /* ---------- Projector view (map.html?present) ---------- */
+  .side { display: none; }
+  .present .app { grid-template-columns: 1fr; }
+  .present .panel { display: none; }
+  .present .side { display: flex; flex-direction: column; gap: 14px; position: absolute; z-index: 600; right: 16px; top: 16px; bottom: 26px; width: 300px; }
+  .present .stat b { font-size: 2.3rem; }
+  .present .stat span { font-size: .92rem; }
+  .qr-card { background: #fff; border-radius: 18px; padding: 16px; box-shadow: 0 10px 30px rgba(0,40,63,.2); text-align: center; flex: none; }
+  .qr-card #qr { display: grid; place-items: center; }
+  .qr-card h2 { font-family: var(--display); font-size: 1.35rem; margin: 10px 0 0; color: var(--navy); }
+  .qr-card p { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
+  .ticker { background: rgba(255,255,255,.96); border-radius: 18px; padding: 14px 16px; box-shadow: 0 10px 30px rgba(0,40,63,.2); overflow: hidden; flex: 1; min-height: 0; }
+  .ticker h3 { font-family: var(--display); margin: 0 0 8px; color: var(--navy); font-size: 1.1rem; }
+  .ticker ul { list-style: none; margin: 0; padding: 0; }
+  .ticker li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .ticker li .avatar { width: 34px; height: 34px; font-size: .78rem; }
+  .ticker b { display: block; line-height: 1.2; }
+  .ticker small { color: var(--muted); }
+  .present .leaflet-control-zoom { display: none; }
+
+  /* ---------- Small screens ---------- */
+  @media (max-width: 900px) {
+    :root { --header-h: 64px; }
+    .top { gap: 10px; padding: 0 12px; }
+    .brand img { height: 40px; }
+    .titles h1 { font-size: 1.12rem; }
+    .titles p, #liveText { display: none; }
+    .live { padding: 8px; }
+    .cta { padding: 9px 14px; font-size: .9rem; }
+    .cta .long { display: none; }
+    .app { grid-template-columns: 1fr; height: auto; min-height: calc(100dvh - var(--header-h)); }
+    .stagewrap { order: 1; height: 50vh; height: 50dvh; }
+    .panel { order: 2; border-right: 0; }
+    .tabpane { overflow: visible; }
+    .stats { left: 8px; top: 8px; padding: 4px; }
+    .stat { padding: 4px 9px; }
+    .stat b { font-size: 1.15rem; }
+    .stat span { font-size: .7rem; }
+    .stat:nth-child(4), .legend { display: none; }
+    .leaflet-popup-content { width: 270px !important; }
   }
   @media (prefers-reduced-motion: reduce) {
-    * { animation: none !important; transition: none !important; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
 <body>
+<header class="top">
+  <a class="brand" href="index.html" title="RISE 2026 workshop home">
+    <img src="assets/RISE-logo-2026-compressed.png" alt="RISE 2026" onerror="this.parentNode.hidden=true">
+  </a>
+  <div class="titles">
+    <h1>Research Expertise Map</h1>
+    <p><a href="index.html">RISE 2026</a> at SC26, Chicago. November 15, 2026, Room W181c</p>
+  </div>
+  <div id="live" class="live" role="status"><span class="live-dot"></span><span id="liveText">Connecting</span></div>
+  <a id="addBtn" class="cta" href="#" target="_blank" rel="noopener" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><path d="M12 6.5v6M9 9.5h6"/></svg>
+    <span>Add<span class="long"> yourself</span></span>
+  </a>
+</header>
+
 <div class="app">
-  <aside class="panel" aria-label="Participants and filters">
-    <h1>RISE Research Expertise Map</h1>
-    <p class="lede">Find people to talk to by research area, career stage and place.</p>
-    <a id="addBtn" class="btn-primary" href="#" target="_blank" rel="noopener" hidden>Add yourself to the map</a>
-
-    <p id="demoNote" class="notice" hidden>You are seeing sample data. Set <code>_URL</code> in map.html to show real responses.</p>
-    <p id="errNote" class="notice error" role="alert" hidden>The latest responses could not be loaded. Trying again shortly.</p>
-
-    <div class="search">
-      <label for="q" class="sr" style="position:absolute;left:-9999px">Search people</label>
-      <input id="q" type="search" placeholder="Search name, topic, affiliation or city" autocomplete="off">
+  <aside class="panel" aria-label="People, insights and matches">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="t-people" aria-controls="p-people" aria-selected="true">People</button>
+      <button class="tab" role="tab" id="t-insights" aria-controls="p-insights" aria-selected="false" tabindex="-1">Insights</button>
+      <button class="tab" role="tab" id="t-match" aria-controls="p-match" aria-selected="false" tabindex="-1">Who to meet</button>
     </div>
 
-    <div class="chips" id="chips" role="group" aria-label="Research area"></div>
+    <!-- People -->
+    <div class="tabpane" id="p-people" role="tabpanel" aria-labelledby="t-people">
+      <p id="demoNote" class="notice" hidden>You are seeing sample data. Set <code>CSV_URL</code> in map.html to show real responses.</p>
+      <p id="errNote" class="notice error" role="alert" hidden>The latest responses could not be loaded. Trying again shortly.</p>
 
-    <div class="selects">
-      <label class="wide">Career stage
-        <select id="stage"><option value="">All career stages</option></select>
-      </label>
-      <label>Open to
-        <select id="openTo"><option value="">Anything</option></select>
-      </label>
-      <label>Country
-        <select id="country"><option value="">All countries</option></select>
-      </label>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <label for="q" class="sr">Search people</label>
+        <input id="q" type="search" placeholder="Search a name, topic, institution or city" autocomplete="off">
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Expertise area"></div>
+      <div class="selects">
+        <label class="wide">Career stage <select id="stage"><option value="">All career stages</option></select></label>
+        <label>Open to <select id="openTo"><option value="">Anything</option></select></label>
+        <label>Country <select id="country"><option value="">All countries</option></select></label>
+      </div>
+      <div id="matchFlag" class="matchflag" hidden><span>Showing your best matches</span><button class="linkbtn" type="button" id="matchClear">Show everyone</button></div>
+
+      <div class="bar">
+        <span id="count" class="count" aria-live="polite"></span>
+        <span>
+          <button id="clear" class="linkbtn" type="button" hidden>Clear filters</button>
+          <label class="sr" for="sort">Sort</label>
+          <select id="sort" class="sort"><option value="az">A to Z</option><option value="new">Newest first</option></select>
+        </span>
+      </div>
+      <ul id="list" class="people"></ul>
     </div>
 
-    <div class="status-row">
-      <span id="count" class="count" aria-live="polite"></span>
-      <button id="clear" class="linkbtn" type="button" hidden>Clear filters</button>
+    <!-- Insights -->
+    <div class="tabpane ins" id="p-insights" role="tabpanel" aria-labelledby="t-insights" hidden>
+      <h3>Expertise areas</h3><div id="insAreas"></div>
+      <h3>Career stages</h3><div id="insStages" class="stages"></div>
+      <h3>Open to</h3><div id="insOpen" class="opens"></div>
+      <h3>Most common topics</h3><div id="insTags" class="cloud"></div>
+      <h3>Countries</h3><div id="insCountries"></div>
     </div>
-    <ul id="list" class="people"></ul>
 
-    <p class="fine">Only people who agreed to be listed appear here. Pins mark a city, not an exact location.</p>
+    <!-- Who to meet -->
+    <div class="tabpane" id="p-match" role="tabpanel" aria-labelledby="t-match" hidden>
+      <p class="lede">Tell the map a little about you and it suggests people to talk to during the break. Your choices stay in your browser.</p>
+      <div class="field">
+        <span class="lab" id="seekLab">I am looking for</span>
+        <div class="seg" role="radiogroup" aria-labelledby="seekLab">
+          <input type="radio" name="seek" id="s-collab" value="collab" checked><label for="s-collab">Collaborators</label>
+          <input type="radio" name="seek" id="s-mentor" value="mentor"><label for="s-mentor">A mentor</label>
+          <input type="radio" name="seek" id="s-mentee" value="mentee"><label for="s-mentee">Someone to mentor</label>
+        </div>
+      </div>
+      <div class="field"><label class="lab" for="mArea">My main area</label><select id="mArea"><option value="">Any area</option></select></div>
+      <div class="field"><label class="lab" for="mStage">My career stage</label><select id="mStage"><option value="">Prefer not to say</option></select></div>
+      <div class="field"><span class="lab">Topics I work on</span><div id="mTags" class="chips tagpick" role="group" aria-label="Topics I work on"></div></div>
+      <div class="bar"><span class="count" id="mCount"></span><button class="linkbtn" id="mShow" type="button" hidden>Show them on the map</button></div>
+      <ul id="mResults" class="results"></ul>
+    </div>
+
+    <p class="fine">Only people who agreed to be listed appear here. Pins mark a city, never an address. To be removed, email <a href="mailto:ayesha.afzal@fau.de">ayesha.afzal@fau.de</a>.</p>
   </aside>
-  <div id="map" role="region" aria-label="World map of participants"></div>
+
+  <div class="stagewrap">
+    <div id="map" role="region" aria-label="World map of RISE participants"></div>
+    <div class="stats" aria-label="Map summary">
+      <div class="stat"><b id="stPeople">0</b><span>innovators</span></div>
+      <div class="stat"><b id="stCountries">0</b><span>countries</span></div>
+      <div class="stat"><b id="stInst">0</b><span>institutions</span></div>
+      <div class="stat"><b id="stMentors">0</b><span>open to mentoring</span></div>
+    </div>
+    <details class="legend" id="legend"><summary>Expertise areas</summary><ul id="legendList"></ul><p class="hint">Rings around a number show the mix of areas in that group. Click a ring to open it.</p></details>
+    <aside class="side" aria-label="Join the map">
+      <div class="qr-card"><div id="qr" role="img" aria-label="QR code that opens the sign-up form"></div><h2>Put yourself on the map</h2><p>Scan, answer a few questions, appear here.</p></div>
+      <div class="ticker"><h3>Just joined</h3><ul id="ticker"></ul></div>
+    </aside>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -157,280 +401,568 @@
 (function () {
   'use strict';
 
-  /* ---------- 1. Settings: edit these ---------- */
+  /* ================= 1. Settings ================= */
   const CONFIG = {
     // Web app URL from Apps Script (ends in /exec). A "Publish to web" CSV link also works.
     CSV_URL: "https://script.google.com/macros/s/AKfycbyBDnnYj_WtgzIGicqgb1ptWEROhkb-vtjg5UxdRxR5Aizrq5BDHglRv2eN9GCY0CoX/exec",
     // Your Google Form link (the one ending in /viewform)
     FORM_URL: "https://docs.google.com/forms/d/e/1FAIpQLSeO3amaHIh_grxtdJdC0PTYrRwCSwTXQ_AI4Nq47HQrGl_HkQ/viewform",
-    REFRESH_SECONDS: 60,
-    // Faster refresh when the page is opened as map.html?present (projector view with QR code)
-    PRESENT_REFRESH_SECONDS: 15
+    REFRESH_SECONDS: 30,
+    PRESENT_REFRESH_SECONDS: 15,      // map.html?present: projector view
+    SPOTLIGHT_SECONDS: 12             // projector view: open the next person's card every n seconds (0 = off)
   };
 
-    const CLUSTERS = [
-    { label: "Algorithms",                                 color: "#2f6fd6" },
-    { label: "Applications",                               color: "#ef8a2b" },
-    { label: "Architecture & Networks",                    color: "#1f9d57" },
-    { label: "Data Analytics, Visualization, & Storage",   color: "#8e5bd6" },
-    { label: "HPC for Machine Learning",                   color: "#d6336c" },
-    { label: "Performance Measurement, Modeling, & Tools", color: "#0e9aa7" },
-    { label: "Post-Moore & Quantum Computing",             color: "#8a5a2b" },
-    { label: "Programming Frameworks",                     color: "#c9a000" },
-    { label: "State of the Practice",                      color: "#33408f" },
-    { label: "System Software & Cloud Computing",          color: "#7a9a01" }
+  // Main expertise areas = SC paper track titles. "label" must match the Form exactly.
+  const CLUSTERS = [
+    { label: "Algorithms",                                 short: "Algorithms",           color: "#2f6fd6" },
+    { label: "Applications",                               short: "Applications",         color: "#fb8d42" },
+    { label: "Architecture & Networks",                    short: "Architecture",         color: "#1f9d57" },
+    { label: "Data Analytics, Visualization, & Storage",   short: "Data & storage",       color: "#8e5bd6" },
+    { label: "HPC for Machine Learning",                   short: "HPC for ML",           color: "#d6336c" },
+    { label: "Performance Measurement, Modeling, & Tools", short: "Performance",          color: "#0a9396" },
+    { label: "Post-Moore & Quantum Computing",             short: "Post-Moore & quantum", color: "#8a5a2b" },
+    { label: "Programming Frameworks",                     short: "Programming",          color: "#c99a00" },
+    { label: "State of the Practice",                      short: "State of practice",    color: "#33408f" },
+    { label: "System Software & Cloud Computing",          short: "Systems & cloud",      color: "#6f9a0a" }
   ];
-  const OTHER = { label: "Other", color: "#6b7a90" };
+  const OTHER = { label: "Other", short: "Other", color: "#7b8a99" };
 
-  // Career stages as listed on the RISE workshop site.
+  // Career stages and icons, as on the RISE workshop site.
   const STAGES = [
-    "Students & Early Career",
-    "Mid-Career Professionals",
-    "Senior Researchers & Technical Leaders",
-    "Education & Workforce"
+    { label: "Students & Early Career",                icon: "🌱", rank: 0 },
+    { label: "Mid-Career Professionals",               icon: "🚀", rank: 1 },
+    { label: "Senior Researchers & Technical Leaders", icon: "🧭", rank: 2 },
+    { label: "Education & Workforce",                  icon: "🌍", rank: 1 }
   ];
   const OPEN_TO = ["Mentoring others", "Looking for a mentor", "Research collaboration"];
 
-  /* ---------- 2. Sample data (only used while CSV_URL is empty) ---------- */
+  /* ================= 2. Sample data (only while CSV_URL is empty) ================= */
   const DEMO = [
-    ["Alex Example","Sample University A","PhD student","Students & Early Career","Erlangen","Germany",49.59,11.00,"HPC & AI Infrastructure","GPUs, Performance engineering","Modeling GPU kernel performance","Looking for a mentor",""],
-    ["Bea Example","Sample Research Centre","Research software engineer","Mid-Career Professionals","Erlangen","Germany",49.59,11.00,"HPC & AI Infrastructure","Energy efficiency, GPUs","Energy-aware scheduling","Research collaboration",""],
-    ["Chidi Example","Sample Institute B","Postdoc","Mid-Career Professionals","Nairobi","Kenya",-1.29,36.82,"AI Applications & Science","Climate AI, Digital twins","Climate models on limited hardware","Research collaboration, Looking for a mentor",""],
-    ["Dana Example","Sample Lab C","Senior scientist","Senior Researchers & Technical Leaders","Chicago","United States",41.88,-87.63,"Foundation Models & GenAI","LLMs, Agents, Distributed AI","Scaling agent workflows on HPC","Mentoring others",""],
-    ["Eli Example","Sample Company D","Engineer","Mid-Career Professionals","Chicago","United States",41.88,-87.63,"HPC & AI Infrastructure","Cloud computing, GPUs","Cloud-native HPC","Research collaboration",""],
-    ["Farah Example","Sample University E","Assistant professor","Mid-Career Professionals","Basel","Switzerland",47.56,7.59,"HPC & AI Infrastructure","Scheduling, Energy efficiency","Fair scheduling on shared systems","Mentoring others, Research collaboration",""],
-    ["Gita Example","Sample University F","Master's student","Students & Early Career","Bengaluru","India",12.97,77.59,"Foundation Models & GenAI","LLMs, RAG","Retrieval for scientific text","Looking for a mentor",""],
-    ["Hiro Example","Sample Institute G","Research scientist","Mid-Career Professionals","Tokyo","Japan",35.68,139.69,"AI Applications & Science","Digital twins, Healthcare","Patient-specific simulation","Research collaboration",""],
-    ["Ines Example","Sample University H","Lecturer","Education & Workforce","Sydney","Australia",-33.87,151.21,"AI Applications & Science","Education, Sustainability","Training programs for new HPC users","Mentoring others",""],
-    ["Jonas Example","Sample University I","PhD student","Students & Early Career","Gothenburg","Sweden",57.71,11.97,"Foundation Models & GenAI","Fine-tuning, LLMs","Efficient fine-tuning","Looking for a mentor",""],
-    ["Kemal Example","Sample Lab J","Principal investigator","Senior Researchers & Technical Leaders","Atlanta","United States",33.75,-84.39,"HPC & AI Infrastructure","Sparse computation, GPUs","Sparse linear algebra at scale","Mentoring others",""],
-    ["Lucia Example","Sample University K","Research engineer","Mid-Career Professionals","Sao Paulo","Brazil",-23.55,-46.63,"AI Applications & Science","Climate AI, Distributed AI","Weather downscaling","Research collaboration",""],
-    ["Mo Example","Sample University L","Undergraduate","Students & Early Career","Enschede","Netherlands",52.22,6.89,"HPC & AI Infrastructure","Quantum computing, GPUs","Quantum and classical hybrid workflows","Looking for a mentor",""],
-    ["Noor Example","Sample University M","Postdoc","Mid-Career Professionals","Thuwal","Saudi Arabia",22.31,39.10,"HPC & AI Infrastructure","Performance engineering, Energy efficiency","Mixed-precision solvers","Research collaboration",""]
-  ].map(r => ({ name:r[0], affiliation:r[1], role:r[2], stage:r[3], city:r[4], country:r[5], lat:r[6], lng:r[7], cluster:r[8], tags:r[9], interest:r[10], open_to:r[11], link:r[12] }));
+    ["Alex Example","Sample University A","PhD student","Students & Early Career","Erlangen","Germany",49.59,11.0,"Performance Measurement, Modeling, & Tools","GPUs & accelerators, Performance modeling","Modeling GPU kernel performance","Looking for a mentor"],
+    ["Bea Example","Sample Research Centre","Research software engineer","Mid-Career Professionals","Erlangen","Germany",49.59,11.0,"State of the Practice","Energy efficiency, HPC operations & user support","Energy-aware operation of HPC centers","Research collaboration"],
+    ["Chidi Example","Sample Institute B","Postdoc","Mid-Career Professionals","Nairobi","Kenya",-1.29,36.82,"Applications","Climate & earth sciences, AI for science","Climate models on limited hardware","Research collaboration, Looking for a mentor"],
+    ["Dana Example","Sample Lab C","Senior scientist","Senior Researchers & Technical Leaders","Chicago","United States",41.88,-87.63,"HPC for Machine Learning","LLMs & foundation models, AI agents, Distributed training","Scaling agent workflows on HPC","Mentoring others"],
+    ["Eli Example","Sample Company D","Engineer","Mid-Career Professionals","Chicago","United States",41.88,-87.63,"System Software & Cloud Computing","Cloud & edge computing, Containers & virtualization","Cloud-native HPC","Research collaboration"],
+    ["Farah Example","Sample University E","Assistant professor","Mid-Career Professionals","Basel","Switzerland",47.56,7.59,"Algorithms","Load balancing & scheduling, Energy efficiency","Fair scheduling on shared systems","Mentoring others, Research collaboration"],
+    ["Gita Example","Sample University F","Master's student","Students & Early Career","Bengaluru","India",12.97,77.59,"HPC for Machine Learning","LLMs & foundation models, Inference at scale","Retrieval for scientific text","Looking for a mentor"],
+    ["Hiro Example","Sample Institute G","Research scientist","Mid-Career Professionals","Tokyo","Japan",35.68,139.69,"Applications","Digital twins, Computational medicine","Patient-specific simulation","Research collaboration"],
+    ["Ines Example","Sample University H","Lecturer","Education & Workforce","Sydney","Australia",-33.87,151.21,"State of the Practice","Education & training, Sustainability","Training programs for new HPC users","Mentoring others"],
+    ["Jonas Example","Sample University I","PhD student","Students & Early Career","Gothenburg","Sweden",57.71,11.97,"Programming Frameworks","Compilers & runtimes, Performance portability","Portable kernels across GPU vendors","Looking for a mentor"],
+    ["Kemal Example","Sample Lab J","Principal investigator","Senior Researchers & Technical Leaders","Atlanta","United States",33.75,-84.39,"Algorithms","Numerical methods & linear algebra, GPUs & accelerators","Sparse linear algebra at scale","Mentoring others"],
+    ["Lucia Example","Sample University K","Research engineer","Mid-Career Professionals","Sao Paulo","Brazil",-23.55,-46.63,"Data Analytics, Visualization, & Storage","Data compression, Parallel I/O & file systems","Compressing weather data in flight","Research collaboration"],
+    ["Mo Example","Sample University L","Undergraduate","Students & Early Career","Enschede","Netherlands",52.22,6.89,"Post-Moore & Quantum Computing","Quantum computing, Heterogeneous computing","Quantum and classical hybrid workflows","Looking for a mentor"],
+    ["Noor Example","Sample University M","Postdoc","Mid-Career Professionals","Thuwal","Saudi Arabia",22.31,39.1,"Architecture & Networks","Interconnects & networks, Energy efficiency","Mixed-precision solvers on new hardware","Research collaboration"]
+  ].map(r => ({ name:r[0], affiliation:r[1], role:r[2], stage:r[3], city:r[4], country:r[5], lat:r[6], lng:r[7], cluster:r[8], tags:r[9], interest:r[10], open_to:r[11], link:"" }));
 
-  /* ---------- 3. Helpers ---------- */
+  /* ================= 3. Helpers ================= */
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const present = new URLSearchParams(location.search).has('present');
   const $ = id => document.getElementById(id);
   const str = v => (v == null ? '' : String(v)).trim();
-  const list = v => str(v).split(/[;,]/).map(s => s.trim()).filter(Boolean);
+  const list = v => [...new Set(str(v).split(/[;,]/).map(s => s.trim()).filter(Boolean))];
   const esc = s => str(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const num = v => parseFloat(str(v).replace(',', '.'));
+  const stageOf = l => STAGES.find(s => s.label === l);
+  const initials = n => n.split(/\s+/).filter(Boolean).map(w => w[0]).filter(c => /\p{L}/u.test(c)).slice(0, 2).join('').toUpperCase() || '?';
+  const avatar = p => '<span class="avatar" style="--c:' + p.cluster.color + '" aria-hidden="true">' + esc(initials(p.name)) + '</span>';
+  const keyOf = p => (p.name + '|' + p.city).toLowerCase();
+  const plural = (n, a, b) => n + ' ' + (n === 1 ? a : b);
+  const place = p => [p.city, p.country].filter(Boolean).join(', ');
 
   function safeUrl(u) {
-    u = str(u);
-    if (!u) return '';
-    try {
-      const url = new URL(/^https?:\/\//i.test(u) ? u : 'https://' + u);
-      return (url.protocol === 'http:' || url.protocol === 'https:') ? url.href : '';
-    } catch (e) { return ''; }
+    u = str(u); if (!u) return '';
+    try { const url = new URL(/^https?:\/\//i.test(u) ? u : 'https://' + u); return /^https?:$/.test(url.protocol) ? url.href : ''; }
+    catch (e) { return ''; }
   }
   function clusterOf(label) {
-    const key = str(label).toLowerCase();
-    return CLUSTERS.find(c => c.label.toLowerCase() === key) || (key ? { label: str(label), color: OTHER.color } : OTHER);
+    const k = str(label).toLowerCase();
+    return CLUSTERS.find(c => c.label.toLowerCase() === k) || OTHER;
   }
-  function toPerson(row) {
+  function toPerson(row, idx) {
     const lat = num(row.lat), lng = num(row.lng);
     if (!str(row.name) || !isFinite(lat) || !isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
     return {
       name: str(row.name), affiliation: str(row.affiliation), role: str(row.role), stage: str(row.stage),
-      city: str(row.city), country: str(row.country), lat, lng,
-      cluster: clusterOf(row.cluster), tags: list(row.tags), interest: str(row.interest),
+      city: str(row.city), country: str(row.country), lat, lng, order: idx,
+      cluster: clusterOf(row.cluster), clusterRaw: str(row.cluster), tags: list(row.tags), interest: str(row.interest),
       openTo: list(row.open_to), link: safeUrl(row.link)
     };
   }
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem('rise-map:' + k)); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem('rise-map:' + k, JSON.stringify(v)); } catch (e) {} }
+  };
 
-  /* ---------- 4. Map ---------- */
-  const map = L.map('map', { minZoom: 2, worldCopyJump: true, zoomControl: true }).setView([30, 10], 2);
+  /* ================= 4. Matching ("Who should I talk to?") ================= */
+  function score(profile, o) {
+    let s = 0; const why = [];
+    const hits = o.tags.filter(t => profile.tags.has(t.toLowerCase()));
+    if (hits.length) { s += 3 * hits.length; why.push(hits.length === 1 ? hits[0] : hits.length + ' shared topics'); }
+    if (profile.area && o.cluster.label === profile.area) { s += 2; why.push('Same area'); }
+    const me = stageOf(profile.stage), them = stageOf(o.stage);
+    if (profile.seek === 'mentor' && o.openTo.includes('Mentoring others')) {
+      s += 3 + (me && them && them.rank > me.rank ? 1 : 0); why.push('Mentors others');
+    }
+    if (profile.seek === 'mentee' && o.openTo.includes('Looking for a mentor')) { s += 3; why.push('Wants a mentor'); }
+    if (profile.seek === 'collab' && o.openTo.includes('Research collaboration')) { s += 2; why.push('Open to collaboration'); }
+    return { s, why };
+  }
+  function profileOf(p) {
+    return {
+      tags: new Set(p.tags.map(t => t.toLowerCase())), area: p.cluster.label, stage: p.stage,
+      seek: p.openTo.includes('Looking for a mentor') ? 'mentor' : p.openTo.includes('Mentoring others') ? 'mentee' : 'collab'
+    };
+  }
+  function rank(profile, excludeIdx, min) {
+    return people.map((o, j) => j === excludeIdx ? null : Object.assign({ j }, score(profile, o)))
+      .filter(r => r && r.s >= min)
+      .sort((a, b) => b.s - a.s || people[a.j].name.localeCompare(people[b.j].name));
+  }
+
+  /* ================= 5. Map ================= */
+  const map = L.map('map', { minZoom: 2, worldCopyJump: true, zoomControl: false }).setView([30, 0], 2);
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 18,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    maxZoom: 18, subdomains: 'abcd',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
   }).addTo(map);
 
+  // Groups are drawn as rings that show the mix of expertise areas inside.
   const group = L.markerClusterGroup({
-    showCoverageOnHover: false, maxClusterRadius: 45, animate: !reduceMotion, spiderfyOnMaxZoom: true,
-    iconCreateFunction: c => L.divIcon({ html: '<div>' + c.getChildCount() + '</div>', className: 'cl', iconSize: L.point(38, 38) })
+    showCoverageOnHover: false, maxClusterRadius: 50, animate: !reduceMotion, spiderfyOnMaxZoom: true, spiderfyDistanceMultiplier: 1.6,
+    iconCreateFunction(c) {
+      const ms = c.getAllChildMarkers(), total = ms.length, counts = {};
+      ms.forEach(m => { counts[m.options.color] = (counts[m.options.color] || 0) + 1; });
+      let acc = 0;
+      const stops = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([col, n]) => {
+        const a = acc / total * 360; acc += n; return col + ' ' + a + 'deg ' + (acc / total * 360) + 'deg';
+      });
+      const size = total < 10 ? 44 : total < 50 ? 52 : 62;
+      return L.divIcon({ html: '<div class="donut" style="background:conic-gradient(' + stops.join(',') + ')"><span>' + total + '</span></div>', className: '', iconSize: L.point(size, size) });
+    }
   });
   map.addLayer(group);
+  const arcs = L.layerGroup().addTo(map);
 
-  /* ---------- 5. State and rendering ---------- */
-  let people = [], markers = [], visible = new Set(), firstFit = true;
-  const filters = { q: '', clusters: new Set(), stage: '', openTo: '', country: '' };
+  function arcPoints(a, b) {
+    const lat1 = a[0], lng1 = a[1], lat2 = b[0];
+    let lng2 = b[1];
+    if (lng2 - lng1 > 180) lng2 -= 360; else if (lng1 - lng2 > 180) lng2 += 360;
+    const dx = lat2 - lat1, dy = lng2 - lng1;
+    const cx = (lat1 + lat2) / 2 - dy * 0.22, cy = (lng1 + lng2) / 2 + dx * 0.22;
+    const pts = [];
+    for (let k = 0; k <= 25; k++) {
+      const t = k / 25, u = 1 - t;
+      pts.push([u * u * lat1 + 2 * u * t * cx + t * t * lat2, u * u * lng1 + 2 * u * t * cy + t * t * lng2]);
+    }
+    return pts;
+  }
+  function drawArcs(i, best) {
+    arcs.clearLayers();
+    const p = people[i];
+    best.forEach(m => {
+      const o = people[m.j];
+      if (Math.abs(o.lat - p.lat) < 0.05 && Math.abs(o.lng - p.lng) < 0.05) return;   // same city
+      L.polyline(arcPoints([p.lat, p.lng], [o.lat, o.lng]), { color: o.cluster.color, weight: 2.5, opacity: .85, className: 'arc', interactive: false }).addTo(arcs);
+    });
+  }
 
-  function matches(p) {
-    if (filters.clusters.size && !filters.clusters.has(p.cluster.label)) return false;
+  /* ================= 6. State ================= */
+  let people = [], markers = [], visible = new Set(), firstFit = true, selected = -1;
+  let knownKeys = null;               // keys from the previous load, to spot new people
+  const freshUntil = new Map();       // key -> time until which the pin pulses
+  const filters = { q: '', areas: new Set(), stage: '', openTo: '', country: '', ids: null };
+  let sortBy = 'az';
+
+  function matches(p, i) {
+    if (filters.ids && !filters.ids.has(i)) return false;
+    if (filters.areas.size && !filters.areas.has(p.cluster.label)) return false;
     if (filters.stage && p.stage !== filters.stage) return false;
     if (filters.openTo && !p.openTo.includes(filters.openTo)) return false;
     if (filters.country && p.country !== filters.country) return false;
     if (filters.q) {
-      const hay = [p.name, p.affiliation, p.role, p.city, p.country, p.tags.join(' '), p.interest, p.cluster.label].join(' ').toLowerCase();
+      const hay = [p.name, p.affiliation, p.role, p.city, p.country, p.tags.join(' '), p.interest, p.cluster.label, p.stage].join(' ').toLowerCase();
       if (!filters.q.toLowerCase().split(/\s+/).every(w => hay.includes(w))) return false;
     }
     return true;
   }
-  const isFiltered = () => filters.q || filters.clusters.size || filters.stage || filters.openTo || filters.country;
+  const isFiltered = () => !!(filters.q || filters.areas.size || filters.stage || filters.openTo || filters.country || filters.ids);
+  const isFresh = p => (freshUntil.get(keyOf(p)) || 0) > Date.now();
 
-  function fillSelect(id, values, current) {
-    const sel = $(id), first = sel.options[0];
-    sel.innerHTML = '';
-    sel.appendChild(first);
-    values.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o); });
+  /* ================= 7. Rendering ================= */
+  function fillSelect(sel, values, current, labeler) {
+    const first = sel.options[0];
+    sel.innerHTML = ''; sel.appendChild(first);
+    values.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = labeler ? labeler(v) : v; sel.appendChild(o); });
     sel.value = values.includes(current) ? current : '';
     return sel.value;
   }
+  const areasPresent = () => CLUSTERS.concat(people.some(p => p.cluster === OTHER) ? [OTHER] : []);
 
-  function buildOptions() {
-    const stages = STAGES.concat([...new Set(people.map(p => p.stage).filter(s => s && !STAGES.includes(s)))]);
+  function buildControls() {
+    const stageLabels = STAGES.map(s => s.label).concat([...new Set(people.map(p => p.stage).filter(s => s && !stageOf(s)))]);
     const opens = OPEN_TO.concat([...new Set(people.flatMap(p => p.openTo).filter(s => !OPEN_TO.includes(s)))]);
     const countries = [...new Set(people.map(p => p.country).filter(Boolean))].sort((a, b) => a.localeCompare(b));
-    filters.stage = fillSelect('stage', stages, filters.stage);
-    filters.openTo = fillSelect('openTo', opens, filters.openTo);
-    filters.country = fillSelect('country', countries, filters.country);
+    const withIcon = l => { const s = stageOf(l); return s ? s.icon + '  ' + l : l; };
+    filters.stage = fillSelect($('stage'), stageLabels, filters.stage, withIcon);
+    filters.openTo = fillSelect($('openTo'), opens, filters.openTo);
+    filters.country = fillSelect($('country'), countries, filters.country);
+    fillSelect($('mArea'), CLUSTERS.map(c => c.label), $('mArea').value || (saved.area || ''));
+    fillSelect($('mStage'), STAGES.map(s => s.label), $('mStage').value || (saved.stage || ''), withIcon);
+
+    const counts = {};
+    people.forEach(p => { counts[p.cluster.label] = (counts[p.cluster.label] || 0) + 1; });
+    $('chips').innerHTML = areasPresent().map(c =>
+      '<button type="button" class="chip" style="--c:' + c.color + '" data-area="' + esc(c.label) + '" title="' + esc(c.label) + '" aria-pressed="' + filters.areas.has(c.label) + '">' +
+      '<span class="dot"></span>' + esc(c.short) + ' <span class="n">' + (counts[c.label] || 0) + '</span></button>').join('');
+    $('legendList').innerHTML = areasPresent().map(c => '<li style="--c:' + c.color + '"><i></i>' + esc(c.label) + '</li>').join('');
   }
 
-  function buildChips() {
-    const present = new Set(people.map(p => p.cluster.label));
-    const all = CLUSTERS.concat(present.has(OTHER.label) || [...present].some(l => !CLUSTERS.find(c => c.label === l)) ? [OTHER] : []);
-    $('chips').innerHTML = all.map(c =>
-      '<button type="button" class="chip" style="--c:' + c.color + '" data-label="' + esc(c.label) + '" aria-pressed="' + filters.clusters.has(c.label) + '"><span class="dot"></span>' + esc(c.label) + '</button>'
-    ).join('');
+  function animateNumber(el, to) {
+    const from = +el.dataset.v || 0; el.dataset.v = to;
+    if (reduceMotion || from === to) { el.textContent = to; return; }
+    const t0 = performance.now(), d = 900;
+    (function step(t) {
+      const k = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(from + (to - from) * e);
+      if (k < 1) requestAnimationFrame(step);
+    })(t0);
   }
-
-  function popupHtml(i) {
-    const p = people[i];
-    const shared = people.map((o, j) => {
-      if (j === i) return null;
-      const n = o.tags.filter(t => p.tags.some(x => x.toLowerCase() === t.toLowerCase())).length;
-      const score = n + (o.cluster.label === p.cluster.label ? 0.5 : 0);
-      return n > 0 ? { j, score } : null;
-    }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 3);
-
-    return '<div class="pop">' +
-      '<h2>' + esc(p.name) + '</h2>' +
-      (p.role ? '<p>' + esc(p.role) + '</p>' : '') +
-      (p.affiliation ? '<p class="sub">' + esc(p.affiliation) + '</p>' : '') +
-      '<p class="sub">' + esc([p.city, p.country].filter(Boolean).join(', ')) + '</p>' +
-      '<p class="area" style="--c:' + p.cluster.color + '"><span class="dot"></span>' + esc(p.cluster.label) + '</p>' +
-      (p.stage ? '<p class="sub">' + esc(p.stage) + '</p>' : '') +
-      (p.interest ? '<p class="interest">' + esc(p.interest) + '</p>' : '') +
-      (p.tags.length ? '<div class="tags">' + p.tags.map(t => '<span class="tag">' + esc(t) + '</span>').join('') + '</div>' : '') +
-      (p.openTo.length ? '<p style="margin-top:8px"><strong>Open to:</strong> ' + esc(p.openTo.join(', ')) + '</p>' : '') +
-      (p.link ? '<p><a href="' + esc(p.link) + '" target="_blank" rel="noopener noreferrer">Website or profile</a></p>' : '') +
-      (shared.length ? '<div class="similar"><strong>Shares interests with</strong>' +
-        shared.map(s => '<button type="button" class="sim" data-id="' + s.j + '">' + esc(people[s.j].name) + ', ' + esc(people[s.j].city) + '</button>').join('') + '</div>' : '') +
-      '</div>';
+  function renderStats() {
+    animateNumber($('stPeople'), people.length);
+    animateNumber($('stCountries'), new Set(people.map(p => p.country).filter(Boolean)).size);
+    animateNumber($('stInst'), new Set(people.map(p => p.affiliation.toLowerCase()).filter(Boolean)).size);
+    animateNumber($('stMentors'), people.filter(p => p.openTo.includes('Mentoring others')).length);
   }
 
   function render(fit) {
     visible = new Set();
-    people.forEach((p, i) => { if (matches(p)) visible.add(i); });
+    people.forEach((p, i) => { if (matches(p, i)) visible.add(i); });
     const ids = [...visible];
-
     group.clearLayers();
     group.addLayers(ids.map(i => markers[i]));
 
     const countries = new Set(ids.map(i => people[i].country).filter(Boolean)).size;
     $('count').textContent = !people.length ? 'No one on the map yet'
-      : isFiltered() ? ids.length + ' of ' + people.length + ' people match'
-      : people.length + (people.length === 1 ? ' person' : ' people') + ' in ' + countries + (countries === 1 ? ' country' : ' countries');
+      : isFiltered() ? ids.length + ' of ' + people.length + ' match'
+      : plural(people.length, 'person', 'people') + ' in ' + plural(countries, 'country', 'countries');
     $('clear').hidden = !isFiltered();
+    $('matchFlag').hidden = !filters.ids;
 
-    const sorted = ids.slice().sort((a, b) => people[a].name.localeCompare(people[b].name));
+    const sorted = ids.slice().sort(sortBy === 'new'
+      ? (a, b) => people[b].order - people[a].order
+      : (a, b) => people[a].name.localeCompare(people[b].name));
     $('list').innerHTML = sorted.length ? sorted.map(i => {
-      const p = people[i];
-      return '<li><button type="button" class="person" data-id="' + i + '" style="--c:' + p.cluster.color + '"><span class="dot"></span><span>' +
-        '<span class="name">' + esc(p.name) + '</span><br>' +
-        '<span class="meta">' + esc([p.affiliation, p.city].filter(Boolean).join(', ')) + '</span>' +
-        (p.tags.length ? '<span class="tags">' + p.tags.slice(0, 4).map(t => '<span class="tag">' + esc(t) + '</span>').join('') + '</span>' : '') +
-        '</span></button></li>';
-    }).join('') : '<li class="empty">' + (people.length
-      ? 'No one matches these filters yet. Clear a filter or add yourself.'
-      : 'The map is empty so far. Be the first to add yourself.') + '</li>';
+      const p = people[i], st = stageOf(p.stage);
+      return '<li><button type="button" class="person" data-id="' + i + '">' + avatar(p) +
+        '<span><span class="name">' + esc(p.name) + (isFresh(p) ? '<span class="fresh">New</span>' : '') + '</span>' +
+        '<span class="meta">' + esc([p.role, p.affiliation].filter(Boolean).join(', ')) + '</span>' +
+        '<span class="meta">' + esc(place(p)) + '</span></span>' +
+        (st ? '<span class="stg" title="' + esc(st.label) + '">' + st.icon + '</span>' : '<span></span>') +
+        '</button></li>';
+    }).join('') : '<li class="empty">' + (people.length ? 'No one matches these filters yet. Clear a filter, or add yourself.' : 'The map is empty so far. Be the first to add yourself.') + '</li>';
 
     if (fit && ids.length) {
-      map.fitBounds(L.latLngBounds(ids.map(i => [people[i].lat, people[i].lng])), { padding: [40, 40], maxZoom: 5, animate: !reduceMotion });
+      map.fitBounds(L.latLngBounds(ids.map(i => [people[i].lat, people[i].lng])), { padding: [70, 70], maxZoom: 5, animate: !reduceMotion });
     }
   }
 
+  function renderInsights() {
+    const byArea = areasPresent().map(c => ({ c, v: people.filter(p => p.cluster.label === c.label).length })).sort((a, b) => b.v - a.v);
+    const maxA = Math.max(1, ...byArea.map(x => x.v));
+    $('insAreas').innerHTML = byArea.map(x =>
+      '<button type="button" class="hbar" data-area="' + esc(x.c.label) + '" style="--c:' + x.c.color + ';--w:' + (x.v / maxA * 100) + '%">' +
+      '<span class="lbl">' + esc(x.c.label) + '</span><span class="val">' + x.v + '</span><span class="track"><span class="fill"></span></span></button>').join('');
+
+    $('insStages').innerHTML = STAGES.map(s => {
+      const v = people.filter(p => p.stage === s.label).length;
+      return '<button type="button" class="stagecard" data-stage="' + esc(s.label) + '"><span class="ic" aria-hidden="true">' + s.icon + '</span><b>' + v + '</b><span class="l">' + esc(s.label) + '</span></button>';
+    }).join('');
+
+    $('insOpen').innerHTML = OPEN_TO.map(o =>
+      '<button type="button" data-open="' + esc(o) + '"><b>' + people.filter(p => p.openTo.includes(o)).length + '</b><span>' + esc(o) + '</span></button>').join('');
+
+    const tagCount = {};
+    people.forEach(p => p.tags.forEach(t => { tagCount[t] = (tagCount[t] || 0) + 1; }));
+    const tags = Object.entries(tagCount).sort((a, b) => b[1] - a[1]).slice(0, 30);
+    const maxT = tags.length ? tags[0][1] : 1;
+    $('insTags').innerHTML = tags.length ? tags.map(([t, v]) =>
+      '<button type="button" data-tag="' + esc(t) + '" style="--s:' + (0.82 + 0.75 * v / maxT).toFixed(2) + 'rem" title="' + plural(v, 'person', 'people') + '">' + esc(t) + '</button>').join('')
+      : '<span class="lede">No topics yet.</span>';
+
+    const byC = {};
+    people.forEach(p => { if (p.country) byC[p.country] = (byC[p.country] || 0) + 1; });
+    const cs = Object.entries(byC).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const maxC = cs.length ? cs[0][1] : 1;
+    $('insCountries').innerHTML = cs.map(([c, v]) =>
+      '<button type="button" class="hbar" data-country="' + esc(c) + '" style="--w:' + (v / maxC * 100) + '%"><span class="lbl">' + esc(c) + '</span><span class="val">' + v + '</span><span class="track"><span class="fill"></span></span></button>').join('');
+  }
+
+  function renderTicker() {
+    if (!present) return;
+    const recent = people.slice().sort((a, b) => b.order - a.order).slice(0, 7);
+    $('ticker').innerHTML = recent.map(p => '<li>' + avatar(p) + '<span><b>' + esc(p.name) + '</b><small>' + esc(place(p)) + '</small></span></li>').join('')
+      || '<li><span></span><span>Be the first!</span></li>';
+  }
+
+  function popupHtml(i) {
+    const p = people[i], st = stageOf(p.stage);
+    const best = rank(profileOf(p), i, 3).slice(0, 3);
+    return '<div style="--c:' + p.cluster.color + '">' +
+      '<div class="card-hd">' + avatar(p) + '<div><h2>' + esc(p.name) + '</h2>' +
+        (p.role ? '<p>' + esc(p.role) + '</p>' : '') + (p.affiliation ? '<p>' + esc(p.affiliation) + '</p>' : '') + '</div></div>' +
+      '<div class="card-bd">' +
+        '<p class="area"><i></i>' + esc(p.cluster === OTHER ? (p.clusterRaw || 'Other') : p.cluster.label) + '</p>' +
+        '<p class="row"><span aria-hidden="true">📍</span>' + esc(place(p)) + '</p>' +
+        (st ? '<p class="row"><span aria-hidden="true">' + st.icon + '</span>' + esc(st.label) + '</p>' : (p.stage ? '<p class="row">' + esc(p.stage) + '</p>' : '')) +
+        (p.interest ? '<p class="quote">' + esc(p.interest) + '</p>' : '') +
+        (p.tags.length ? '<div class="tags">' + p.tags.map(t => '<span class="tag">' + esc(t) + '</span>').join('') + '</div>' : '') +
+        (p.openTo.length ? '<div class="badges">' + p.openTo.map(o => '<span class="badge">' + esc(o) + '</span>').join('') + '</div>' : '') +
+        '<div class="actions">' + (p.link ? '<a href="' + esc(p.link) + '" target="_blank" rel="noopener noreferrer">Website or profile</a>' : '') +
+          '<button type="button" class="copy" data-id="' + i + '">Copy link to this card</button></div>' +
+        (best.length ? '<div class="meet"><strong>Good people to meet</strong>' + best.map(m => {
+          const o = people[m.j];
+          return '<button type="button" class="sim" data-id="' + m.j + '">' + avatar(o) + '<span><b>' + esc(o.name) + '</b><small>' + esc(m.why.slice(0, 2).join(', ')) + '</small></span></button>';
+        }).join('') + '</div>' : '') +
+      '</div></div>';
+  }
+
+  function makeIcon(p, i) {
+    return L.divIcon({
+      className: '', iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -14],
+      html: '<span class="pin' + (isFresh(p) ? ' new' : '') + (i === selected ? ' sel' : '') + '" style="--c:' + p.cluster.color + '">' + esc(initials(p.name)) + '</span>'
+    });
+  }
+
   function setPeople(arr) {
+    map.closePopup();
     people = arr;
-    markers = people.map((p, i) => L.marker([p.lat, p.lng], {
-      title: p.name, alt: p.name,
-      icon: L.divIcon({ className: 'pin', html: '<span style="--c:' + p.cluster.color + '"></span>', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] })
-    }).bindPopup(() => popupHtml(i), { maxWidth: 300 }));
-    buildOptions();
-    buildChips();
+    selected = -1; arcs.clearLayers();
+    markers = people.map((p, i) => {
+      const m = L.marker([p.lat, p.lng], { icon: makeIcon(p, i), title: p.name, alt: p.name, color: p.cluster.color, riseId: i });
+      m.bindPopup(() => popupHtml(i), { maxWidth: 340, minWidth: 260, autoPanPadding: [40, 90] });
+      return m;
+    });
+    buildControls();
+    renderStats();
+    renderInsights();
+    renderMatches();
+    renderTicker();
     render(firstFit);
     if (people.length) firstFit = false;
   }
 
+  /* ================= 8. Interaction ================= */
   function focusPerson(i) {
     if (!visible.has(i)) { resetFilters(); render(false); }
     const m = markers[i];
-    map.setView(m.getLatLng(), Math.max(map.getZoom(), 6), { animate: !reduceMotion });
-    group.zoomToShowLayer(m, () => m.openPopup());
+    group.zoomToShowLayer(m, () => {
+      if (map.getZoom() < 4) map.setView(m.getLatLng(), 4, { animate: !reduceMotion });
+      m.openPopup();
+    });
   }
-
   function resetFilters() {
-    filters.q = ''; filters.clusters.clear(); filters.stage = ''; filters.openTo = ''; filters.country = '';
+    filters.q = ''; filters.areas.clear(); filters.stage = ''; filters.openTo = ''; filters.country = ''; filters.ids = null;
     $('q').value = ''; $('stage').value = ''; $('openTo').value = ''; $('country').value = '';
-    buildChips();
+    document.querySelectorAll('#chips .chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  }
+  function showTab(name) {
+    ['people', 'insights', 'match'].forEach(t => {
+      const on = t === name;
+      $('t-' + t).setAttribute('aria-selected', on); $('t-' + t).tabIndex = on ? 0 : -1;
+      $('p-' + t).hidden = !on;
+    });
+  }
+  function toast(html) {
+    const t = $('toast');
+    t.innerHTML = html; t.classList.add('show');
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 5500);
   }
 
-  /* ---------- 6. Events ---------- */
-  let timer;
-  $('q').addEventListener('input', e => { clearTimeout(timer); timer = setTimeout(() => { filters.q = e.target.value.trim(); render(true); }, 150); });
+  // Tabs: click and arrow keys
+  const tabBar = document.querySelector('.tabs');
+  tabBar.addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) showTab(b.id.slice(2)); });
+  tabBar.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const tabs = [...tabBar.querySelectorAll('.tab')], i = tabs.indexOf(document.activeElement);
+    const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+    n.focus(); showTab(n.id.slice(2));
+  });
+
+  // People filters
+  let qTimer;
+  $('q').addEventListener('input', e => { clearTimeout(qTimer); qTimer = setTimeout(() => { filters.q = e.target.value.trim(); render(true); }, 150); });
   ['stage', 'openTo', 'country'].forEach(id => $(id).addEventListener('change', e => { filters[id] = e.target.value; render(true); }));
   $('chips').addEventListener('click', e => {
     const b = e.target.closest('.chip'); if (!b) return;
-    const l = b.dataset.label;
-    filters.clusters.has(l) ? filters.clusters.delete(l) : filters.clusters.add(l);
-    b.setAttribute('aria-pressed', filters.clusters.has(l));
+    const a = b.dataset.area;
+    filters.areas.has(a) ? filters.areas.delete(a) : filters.areas.add(a);
+    b.setAttribute('aria-pressed', filters.areas.has(a));
     render(true);
   });
   $('clear').addEventListener('click', () => { resetFilters(); render(true); });
+  $('matchClear').addEventListener('click', () => { filters.ids = null; render(true); });
+  $('sort').addEventListener('change', e => { sortBy = e.target.value; render(false); });
   $('list').addEventListener('click', e => { const b = e.target.closest('.person'); if (b) focusPerson(+b.dataset.id); });
-  map.on('popupopen', e => {
-    e.popup.getElement().querySelectorAll('.sim').forEach(b => b.addEventListener('click', () => focusPerson(+b.dataset.id)));
+
+  // Insights: every bar and number is a shortcut to a filter
+  $('p-insights').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    resetFilters();
+    if (b.dataset.area) filters.areas.add(b.dataset.area);
+    if (b.dataset.stage) filters.stage = b.dataset.stage;
+    if (b.dataset.open) filters.openTo = b.dataset.open;
+    if (b.dataset.country) filters.country = b.dataset.country;
+    if (b.dataset.tag) { filters.q = b.dataset.tag; $('q').value = b.dataset.tag; }
+    buildControls();
+    showTab('people'); render(true);
   });
 
-  /* ---------- 7. Load data ---------- */
-  if (CONFIG.FORM_URL) { const a = $('addBtn'); a.href = CONFIG.FORM_URL; a.hidden = false; }
+  // Who to meet
+  const saved = store.get('profile') || {};
+  const myTags = new Set((saved.tags || []).map(t => t.toLowerCase()));
+  if (saved.seek) { const r = document.querySelector('input[name="seek"][value="' + saved.seek + '"]'); if (r) r.checked = true; }
+  let lastMatchIds = [];
 
-  const present = new URLSearchParams(location.search).has('present');
+  function myProfile() {
+    return { tags: myTags, area: $('mArea').value, stage: $('mStage').value, seek: (document.querySelector('input[name="seek"]:checked') || {}).value || 'collab' };
+  }
+  function renderMatches() {
+    const counts = {};
+    people.forEach(p => p.tags.forEach(t => { const k = t.toLowerCase(); counts[k] = counts[k] || { t, n: 0 }; counts[k].n++; }));
+    myTags.forEach(k => { if (!counts[k]) counts[k] = { t: k, n: 0 }; });
+    const all = Object.entries(counts).sort((a, b) => b[1].n - a[1].n || a[1].t.localeCompare(b[1].t));
+    $('mTags').innerHTML = all.length ? all.map(([k, v]) =>
+      '<button type="button" class="chip" data-tag="' + esc(k) + '" aria-pressed="' + myTags.has(k) + '">' + esc(v.t) + '</button>').join('')
+      : '<span class="lede">Topics appear here once people join.</span>';
+
+    const prof = myProfile();
+    store.set('profile', { tags: [...myTags], area: prof.area, stage: prof.stage, seek: prof.seek });
+    const hasInput = myTags.size || prof.area;
+    const res = hasInput ? rank(prof, -1, 3).slice(0, 10) : [];
+    lastMatchIds = res.map(r => r.j);
+    $('mCount').textContent = !hasInput ? 'Pick a topic or an area' : res.length ? plural(res.length, 'suggestion', 'suggestions') : 'No strong matches yet';
+    $('mShow').hidden = !res.length;
+    const top = res.length ? res[0].s : 1;
+    $('mResults').innerHTML = res.map(r => {
+      const o = people[r.j];
+      return '<li><button type="button" class="result" data-id="' + r.j + '">' + avatar(o) +
+        '<span><b>' + esc(o.name) + '</b><span class="meta">' + esc([o.affiliation, o.city].filter(Boolean).join(', ')) + '</span>' +
+        '<span class="why">' + r.why.map(w => '<span>' + esc(w) + '</span>').join('') + '</span></span>' +
+        '<span class="score" title="Match strength relative to your best match">' + Math.round(r.s / top * 100) + '%</span></button></li>';
+    }).join('');
+  }
+  $('mTags').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    const k = b.dataset.tag; myTags.has(k) ? myTags.delete(k) : myTags.add(k);
+    renderMatches();
+  });
+  ['mArea', 'mStage'].forEach(id => $(id).addEventListener('change', renderMatches));
+  document.querySelectorAll('input[name="seek"]').forEach(r => r.addEventListener('change', renderMatches));
+  $('mResults').addEventListener('click', e => { const b = e.target.closest('.result'); if (b) focusPerson(+b.dataset.id); });
+  $('mShow').addEventListener('click', () => { resetFilters(); filters.ids = new Set(lastMatchIds); showTab('people'); render(true); });
+
+  // Cards: highlight the pin, draw arcs to good matches, wire the buttons
+  map.on('popupopen', e => {
+    const src = e.popup._source, id = src && src.options.riseId;
+    if (id == null || !people[id]) return;
+    selected = id; src.setIcon(makeIcon(people[id], id));
+    drawArcs(id, rank(profileOf(people[id]), id, 3).slice(0, 3));
+    try { history.replaceState(null, '', location.pathname + location.search + '#p=' + encodeURIComponent(people[id].name)); } catch (err) {}
+    const el = e.popup.getElement();
+    el.querySelectorAll('.sim').forEach(b => b.addEventListener('click', () => focusPerson(+b.dataset.id)));
+    el.querySelectorAll('.copy').forEach(b => b.addEventListener('click', () => {
+      const url = location.origin + location.pathname + '#p=' + encodeURIComponent(people[+b.dataset.id].name);
+      (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(
+        () => { b.textContent = 'Link copied'; }, () => { window.prompt('Copy this link', url); });
+    }));
+  });
+  map.on('popupclose', e => {
+    const src = e.popup._source, id = src && src.options.riseId;
+    arcs.clearLayers();
+    if (id != null && people[id] && markers[id] === src) { selected = -1; src.setIcon(makeIcon(people[id], id)); }
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (err) {}
+  });
+
+  /* ================= 9. Projector view ================= */
   if (present) {
     document.body.classList.add('present');
+    $('legend').open = true;
     if (CONFIG.FORM_URL && window.QRCode) {
-      const qr = L.control({ position: 'bottomright' });
-      qr.onAdd = () => {
-        const d = L.DomUtil.create('div', 'qr-card');
-        d.innerHTML = '<div id="qr" role="img" aria-label="QR code that opens the form"></div><p>Scan to add yourself</p>';
-        new QRCode(d.querySelector('#qr'), { text: CONFIG.FORM_URL, width: 190, height: 190, correctLevel: QRCode.CorrectLevel.M });
-        L.DomEvent.disableClickPropagation(d);
-        return d;
-      };
-      qr.addTo(map);
+      new QRCode($('qr'), { text: CONFIG.FORM_URL, width: 220, height: 220, colorDark: '#003b5d', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
     }
+    let spot = 0;
+    if (CONFIG.SPOTLIGHT_SECONDS > 0) setInterval(() => {
+      if (!people.length) return;
+      const order = people.map((p, i) => i).sort((a, b) => people[b].order - people[a].order);
+      focusPerson(order[spot++ % order.length]);
+    }, CONFIG.SPOTLIGHT_SECONDS * 1000);
+  }
+
+  /* ================= 10. Data loading ================= */
+  if (CONFIG.FORM_URL) { const a = $('addBtn'); a.href = CONFIG.FORM_URL; a.hidden = false; }
+
+  function setLive(ok, text) {
+    $('live').className = 'live ' + (ok ? 'ok' : 'err');
+    $('liveText').textContent = text;
+  }
+  function openFromHash() {
+    const m = location.hash.match(/^#p=(.+)$/);
+    if (!m) return;
+    const name = decodeURIComponent(m[1]).toLowerCase();
+    const i = people.findIndex(p => p.name.toLowerCase() === name);
+    if (i >= 0) setTimeout(() => focusPerson(i), 500);
   }
 
   async function load() {
-    if (!CONFIG.CSV_URL) { $('demoNote').hidden = false; setPeople(DEMO.map(toPerson).filter(Boolean)); return; }
+    if (!CONFIG.CSV_URL) {
+      $('demoNote').hidden = false;
+      setPeople(DEMO.map(toPerson).filter(Boolean));
+      setLive(true, 'Sample data');
+      openFromHash();
+      return;
+    }
     try {
       const sep = CONFIG.CSV_URL.includes('?') ? '&' : '?';
       const res = await fetch(CONFIG.CSV_URL + sep + 't=' + Date.now());
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const parsed = Papa.parse(await res.text(), { header: true, skipEmptyLines: true, transformHeader: h => h.trim().toLowerCase() });
       const next = parsed.data.map(toPerson).filter(Boolean);
-      const sig = JSON.stringify(next.map(p => [p.name, p.lat, p.lng, p.tags, p.cluster.label, p.interest]));
+      const first = !knownKeys;
+
+      if (!first) {
+        const joined = next.filter(p => !knownKeys.has(keyOf(p)));
+        joined.forEach(p => freshUntil.set(keyOf(p), Date.now() + 3 * 60 * 1000));
+        if (joined.length) {
+          const p = joined[joined.length - 1];
+          toast(avatar(p) + '<span><b>' + esc(p.name) + '</b> just joined from ' + esc(p.city || p.country) +
+            (joined.length > 1 ? ' and ' + plural(joined.length - 1, 'other', 'others') : '') + '</span>');
+        }
+      }
+      knownKeys = new Set(next.map(keyOf));
+
+      const sig = JSON.stringify(next.map(p => [p.name, p.lat, p.lng, p.tags, p.cluster.label, p.interest, p.openTo, p.stage, p.role, p.affiliation]));
       if (sig !== load.last) { load.last = sig; setPeople(next); }
+      if (first) openFromHash();
+
       $('errNote').hidden = true;
+      setLive(true, 'Live, updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     } catch (err) {
       console.error(err);
       $('errNote').hidden = false;
+      setLive(false, 'Reconnecting');
     }
   }
   load();
-  if (CONFIG._URL) setInterval(load, (present ? CONFIG.PRESENT_REFRESH_SECONDS : CONFIG.REFRESH_SECONDS) * 1000);
+  if (CONFIG.CSV_URL) setInterval(load, (present ? CONFIG.PRESENT_REFRESH_SECONDS : CONFIG.REFRESH_SECONDS) * 1000);
+
+  // Stop the "new" pulse once it has run for a few minutes.
+  setInterval(() => {
+    const now = Date.now();
+    let changed = false;
+    freshUntil.forEach((t, k) => { if (t < now) { freshUntil.delete(k); changed = true; } });
+    if (changed) { markers.forEach((m, i) => m.setIcon(makeIcon(people[i], i))); render(false); }
+  }, 30000);
 })();
 </script>
 </body>
