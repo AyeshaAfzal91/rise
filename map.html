@@ -116,7 +116,7 @@
     <p class="lede">Find people to talk to by research area, career stage and place.</p>
     <a id="addBtn" class="btn-primary" href="#" target="_blank" rel="noopener" hidden>Add yourself to the map</a>
 
-    <p id="demoNote" class="notice" hidden>You are seeing sample data. Set <code>CSV_URL</code> in map.html to show real responses.</p>
+    <p id="demoNote" class="notice" hidden>You are seeing sample data. Set <code>_URL</code> in map.html to show real responses.</p>
     <p id="errNote" class="notice error" role="alert" hidden>The latest responses could not be loaded. Trying again shortly.</p>
 
     <div class="search">
@@ -432,7 +432,7 @@ FORM_URL: "https://docs.google.com/forms/d/e/.../viewform",
     }
   }
   load();
-  if (CONFIG.CSV_URL) setInterval(load, (present ? CONFIG.PRESENT_REFRESH_SECONDS : CONFIG.REFRESH_SECONDS) * 1000);
+  if (CONFIG._URL) setInterval(load, (present ? CONFIG.PRESENT_REFRESH_SECONDS : CONFIG.REFRESH_SECONDS) * 1000);
 })();
 </script>
 </body>
