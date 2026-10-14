@@ -6,9 +6,10 @@
     <title>RISE Workshop 2026</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .speaker-topics { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-        .speaker-topics span { font-size:0.78em; padding:3px 9px; border-radius:999px;
-            background:#e6f2f4; color:#005f73; border:1px solid #b8dbe0; white-space:nowrap; }
+        .speaker-topics { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:8px; }
+        .speaker-topics span:not(.panel-track) { font-size:0.78em; padding:3px 9px; border-radius:999px;
+            background:#f1f3f5; color:#3d4a55; border:1px solid #d5dbe0; white-space:nowrap; }
+        .speaker-topics .panel-track { margin:0; }
         .panel-card .speaker-topics { justify-content:center; }
         .keynote-speaker-info .panel-track { display:inline-block; margin-bottom:6px; }
         .panel-track + .panel-track { margin-left:4px; }
@@ -520,14 +521,13 @@
         </div>
 
         <div class="rising-details">
-            <span class="panel-track academia">ACADEMIA</span>
             <p class="rising-affiliation">
                 EPCC - The University of Edinburgh, UK
             </p>
             <p class="rising-title">
                 <strong>Title:</strong> One Code, Two Worlds: Building an Open-Source CFD Code in Collaboration with Industry
             </p>
-            <div class="speaker-topics"><span>CFD</span><span>Open-Source HPC</span></div>
+            <div class="speaker-topics"><span class="panel-track academia">ACADEMIA</span><span>CFD</span><span>Open-Source HPC</span></div>
         </div>
     </div>
 
@@ -541,14 +541,13 @@
     </div>
 
     <div class="rising-details">
-        <span class="panel-track industry">INDUSTRY</span>
             <p class="rising-affiliation">
             IBM, Germany
         </p>
         <p class="rising-title">
             <strong>Title:</strong> Scalability Issues on AI Infrastructures
         </p>
-            <div class="speaker-topics"><span>AI Infrastructure</span><span>Scalability</span></div>
+            <div class="speaker-topics"><span class="panel-track industry">INDUSTRY</span><span>AI Infrastructure</span><span>Scalability</span></div>
     </div>
 </div>
 					
@@ -562,14 +561,13 @@
     </div>
 
     <div class="rising-details">
-        <span class="panel-track academia">ACADEMIA</span>
             <p class="rising-affiliation">
             University of Kentucky, USA
         </p>
         <p class="rising-title">
             <strong>Title:</strong> Cancer Surveillance in the Age of AI
         </p>
-            <div class="speaker-topics"><span>AI in Healthcare</span><span>Biomedical Data</span></div>
+            <div class="speaker-topics"><span class="panel-track academia">ACADEMIA</span><span>AI in Healthcare</span><span>Biomedical Data</span></div>
     </div>
 </div>
 </div>
@@ -595,14 +593,13 @@
         </div>
 
         <div class="rising-details">
-            <span class="panel-track academia">ACADEMIA</span>
             <p class="rising-affiliation">
                 King Abdullah University of Science and Technology (KAUST), Saudi Arabia
             </p>
             <p class="rising-title">
                 <strong>Title:</strong> Algorithms as if Architecture Mattered: Moving Less, Computing Faster
             </p>
-            <div class="speaker-topics"><span>Mixed-Precision Computing</span><span>Communication-Avoiding Algorithms</span></div>
+            <div class="speaker-topics"><span class="panel-track academia">ACADEMIA</span><span>Mixed-Precision Computing</span><span>Communication-Avoiding Algorithms</span></div>
         </div>
     </div>
 
@@ -617,7 +614,6 @@
         </div>
 
         <div class="rising-details">
-            <span class="panel-track academia">ACADEMIA</span>
             <p class="rising-affiliation">
                 Cornell University, USA
             </p>
@@ -625,7 +621,7 @@
                 <strong>Title:</strong>
                 Sparse by Nature, Parallel by Design: HPC for the Life Sciences
             </p>
-            <div class="speaker-topics"><span>Sparse Computations</span><span>Computational Genomics</span></div>
+            <div class="speaker-topics"><span class="panel-track academia">ACADEMIA</span><span>Sparse Computations</span><span>Computational Genomics</span></div>
         </div>
     </div>
 
@@ -637,14 +633,13 @@
         </div>
 
         <div class="rising-details">
-            <span class="panel-track academia">ACADEMIA</span>
             <p class="rising-affiliation">
                 University of North Texas, USA
             </p>
             <p class="rising-title">
                 <strong>Title:</strong> TBA
             </p>
-            <div class="speaker-topics"><span>Scientific Workflows</span><span>Auto-Tuning</span><span>Energy Efficiency</span></div>
+            <div class="speaker-topics"><span class="panel-track academia">ACADEMIA</span><span>Scientific Workflows</span><span>Auto-Tuning</span><span>Energy Efficiency</span></div>
         </div>
     </div>
 
@@ -658,14 +653,13 @@
     </div>
 
     <div class="rising-details">
-        <span class="panel-track academia">ACADEMIA</span>
             <p class="rising-affiliation">
             Leiden University, Netherlands
         </p>
         <p class="rising-title">
             <strong>Title:</strong> Abstract, Portable, Performant: realizing sustainable HPC
         </p>
-            <div class="speaker-topics"><span>Auto-Tuning</span><span>Performance Portability</span></div>
+            <div class="speaker-topics"><span class="panel-track academia">ACADEMIA</span><span>Auto-Tuning</span><span>Performance Portability</span></div>
     </div>
 </div>
 
@@ -677,13 +671,13 @@
     </div>
 
     <div class="rising-details">
-        <span class="panel-track industry">INDUSTRY</span>
             <p class="rising-affiliation">
             HPE, USA
         </p>
         <p class="rising-title">
             <strong>Title:</strong> TBA
         </p>
+            <div class="speaker-topics"><span class="panel-track industry">INDUSTRY</span></div>
     </div>
 </div>
 
