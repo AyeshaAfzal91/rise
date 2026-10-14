@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RISE Workshop 2026</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .speaker-topics { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+        .speaker-topics span { font-size:0.78em; padding:3px 9px; border-radius:999px;
+            background:#e6f2f4; color:#005f73; border:1px solid #b8dbe0; white-space:nowrap; }
+        .panel-card .speaker-topics { justify-content:center; }
+        .panel-track + .panel-track { margin-left:4px; }
+    </style>
 </head>
 <body>
     
@@ -383,6 +390,7 @@
         </div>
 
         <div class="panel-info">
+            <span class="panel-track academia">ACADEMIA</span> <span class="panel-track industry">INDUSTRY</span>
             <p class="panel-name">
                 <strong>
                     <a href="https://en.wikipedia.org/wiki/John_Gustafson_%28scientist%29"
@@ -397,6 +405,7 @@
                 VQ Research<br>
                 USA
             </p>
+            <div class="speaker-topics"><span>Posit Arithmetic</span><span>Gustafson's Law</span></div>
         </div>
     </div>
 
@@ -411,6 +420,7 @@
         </div>
 
         <div class="panel-info">
+            <span class="panel-track academia">ACADEMIA</span> <span class="panel-track national-lab">NATIONAL LAB</span>
             <p class="panel-name">
                 <strong>
                     <a href="https://en.wikipedia.org/wiki/Ian_Foster_(computer_scientist)"
@@ -425,6 +435,7 @@
                 Argonne National Lab<br>
                 USA
             </p>
+            <div class="speaker-topics"><span>Father of Grid Computing</span><span>Distributed Systems</span></div>
         </div>
     </div>
 
@@ -433,12 +444,13 @@
     <div class="panel-photo">
 		<img src="assets/AxelKoehler_NVIDIA.jpg"
              width="120px"
-             alt="xel Koehler"
+             alt="Axel Koehler"
              class="panel-img">
     </div>
 
     <div class="panel-info">
-        <p class="panel-name">
+        <span class="panel-track industry">INDUSTRY</span>
+            <p class="panel-name">
             <strong>
                 <a href="https://www.linkedin.com/in/axkoehler/"
                    style="color: #005f73;">
@@ -451,6 +463,7 @@
             NVIDIA<br>
             Germany
         </p>
+            <div class="speaker-topics"><span>HPC Architecture</span><span>Large-Scale Clusters</span></div>
     </div>
 </div>
 	
@@ -464,7 +477,8 @@
     </div>
 
     <div class="panel-info">
-        <p class="panel-name">
+        <span class="panel-track industry">INDUSTRY</span>
+            <p class="panel-name">
             <strong>
                 <a href="https://itsharveytime.com/"
                    style="color: #005f73;">
@@ -477,6 +491,7 @@
             NVIDIA<br>
             USA
         </p>
+            <div class="speaker-topics"><span>HPC Operations</span><span>Slurm Clusters</span></div>
     </div>
 </div>
 
@@ -502,12 +517,14 @@
         </div>
 
         <div class="rising-details">
+            <span class="panel-track academia">ACADEMIA</span>
             <p class="rising-affiliation">
                 EPCC - The University of Edinburgh, UK
             </p>
             <p class="rising-title">
                 <strong>Title:</strong> One Code, Two Worlds: Building an Open-Source CFD Code in Collaboration with Industry
             </p>
+            <div class="speaker-topics"><span>CFD</span><span>Open-Source HPC</span></div>
         </div>
     </div>
 
@@ -521,12 +538,14 @@
     </div>
 
     <div class="rising-details">
-        <p class="rising-affiliation">
+        <span class="panel-track industry">INDUSTRY</span>
+            <p class="rising-affiliation">
             IBM, Germany
         </p>
         <p class="rising-title">
             <strong>Title:</strong> Scalability Issues on AI Infrastructures
         </p>
+            <div class="speaker-topics"><span>AI Infrastructure</span><span>Scalability</span></div>
     </div>
 </div>
 					
@@ -540,12 +559,14 @@
     </div>
 
     <div class="rising-details">
-        <p class="rising-affiliation">
+        <span class="panel-track academia">ACADEMIA</span>
+            <p class="rising-affiliation">
             University of Kentucky, USA
         </p>
         <p class="rising-title">
             <strong>Title:</strong> Cancer Surveillance in the Age of AI
         </p>
+            <div class="speaker-topics"><span>AI in Healthcare</span><span>Biomedical Data</span></div>
     </div>
 </div>
 </div>
