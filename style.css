@@ -496,9 +496,94 @@ footer {
     border-top: 1px solid #e8edef;
 }
 
+/* Abstract and Bio open when clicked */
+
+.keynote-toggle {
+    padding: 0;
+}
+
+.keynote-toggle + .keynote-toggle {
+    border-top: 1px solid #e8edef;
+}
+
+.keynote-toggle > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 18px 30px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.keynote-toggle > summary::-webkit-details-marker {
+    display: none;
+}
+
+.keynote-toggle > summary h3 {
+    margin: 0;
+    padding: 0;
+    border-bottom: 0;
+}
+
+.keynote-toggle > summary:hover h3 {
+    color: #0a9396;
+}
+
+.keynote-toggle > summary:focus-visible {
+    outline: 3px solid #ee9b00;
+    outline-offset: -3px;
+    border-radius: 6px;
+}
+
+/* "Show" / "Hide" with an arrow */
+.keynote-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #005f73;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.keynote-hint::before {
+    content: "Show";
+}
+
+.keynote-toggle[open] .keynote-hint::before {
+    content: "Hide";
+}
+
+.keynote-hint::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-right: 2.5px solid currentColor;
+    border-bottom: 2.5px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 0.2s ease;
+}
+
+.keynote-toggle[open] .keynote-hint::after {
+    transform: translateY(2px) rotate(-135deg);
+}
+
+.keynote-toggle > p {
+    padding: 0 30px 22px;
+}
+
 /* Responsive */
 
 @media (max-width: 600px) {
+
+    .keynote-toggle > summary {
+        padding: 16px 20px;
+    }
+
+    .keynote-toggle > p {
+        padding: 0 20px 20px;
+    }
 
     .keynote-speaker {
         flex-direction: column;
@@ -529,7 +614,7 @@ footer {
 
 /* =========================================
 RISE 2026 — SCOPE
-Advanced 2 × 2 Card Layout
+Four compact cards in one row
 ========================================= */
 #scope .scope-intro {
 max-width: 900px;
@@ -543,9 +628,8 @@ color: #333;
 
 #scope .scope-grid {
 display: grid;
-grid-template-columns: repeat(2, minmax(0, 1fr));
-gap: 1.5rem;
-max-width: 1100px;
+grid-template-columns: repeat(4, minmax(0, 1fr));
+gap: 1rem;
 margin: 0 auto;
 }
 
@@ -553,7 +637,7 @@ margin: 0 auto;
 
 #scope .scope-card {
 position: relative;
-padding: 1.35rem 1.5rem;
+padding: 1.1rem 1rem 1rem;
 
 background: linear-gradient(
     145deg,
@@ -562,7 +646,7 @@ background: linear-gradient(
 );
 
 border: 1px solid #dbe8ea;
-border-radius: 18px;
+border-radius: 14px;
 
 box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.08);
@@ -611,10 +695,11 @@ box-shadow:
 
 #scope .scope-card-header {
 display: flex;
-align-items: center;
+flex-direction: column;
+align-items: flex-start;
 
-gap: 0.75rem;
-margin-bottom: 0.85rem;
+gap: 0.55rem;
+margin-bottom: 0.6rem;
 
 }
 /* ---------- Icon ---------- */
@@ -645,7 +730,7 @@ margin: 0 0 0.2rem;
 
 color: #005f73;
 
-font-size: 1.12rem;
+font-size: 1rem;
 line-height: 1.3;
 
 font-weight: 700;
@@ -668,11 +753,11 @@ letter-spacing: 0.04em;
 /* ---------- Audience ---------- */
 
 #scope .scope-audience {
-margin: 0 0 0.9rem;
+margin: 0 0 0.75rem;
 
 color: #444;
 
-font-size: 0.96rem;
+font-size: 0.9rem;
 line-height: 1.45;
 
 }
@@ -700,17 +785,25 @@ color: #005f73;
 
 border: 1px solid #d2e8ea;
 
-font-size: 0.77rem;
+font-size: 0.74rem;
 font-weight: 600;
 
 line-height: 1.25;
-
-white-space: nowrap;
 
 }
 /* =========================================
 RESPONSIVE
 ========================================= */
+
+/* Narrower screens: two per row */
+
+@media (max-width: 1100px) {
+
+#scope .scope-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+}
 
 /* Tablets */
 
