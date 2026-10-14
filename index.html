@@ -13,6 +13,18 @@
         .panel-card .speaker-topics { justify-content:center; }
         .keynote-speaker-info .panel-track { display:inline-block; margin-bottom:6px; }
         .panel-track + .panel-track { margin-left:4px; }
+        #glance h2 { font-size:1.5em; }
+        .glance-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:10px 0 4px; }
+        .glance-stat { text-align:center; padding:10px 4px; border-radius:10px; background:#f4f8f9; border:1px solid #dce8eb; }
+        .glance-stat strong { display:block; font-size:1.7em; line-height:1.1; color:#005f73; }
+        .glance-stat span { font-size:0.8em; color:#555; }
+        .glance-heading { font-size:1em; margin:16px 0 6px; color:#005f73; }
+        .glance-bars { list-style:none; padding:0; margin:0; }
+        .glance-bars li { display:flex; justify-content:space-between; align-items:center; padding:3px 0; }
+        .glance-bars .panel-track { margin:0; }
+        .glance-bars b { color:#333; }
+        .glance-list { margin:0; font-weight:600; color:#333; font-size:0.95em; }
+        .glance-note { margin:4px 0 0; font-size:0.8em; color:#777; line-height:1.4; }
     </style>
 </head>
 <body>
@@ -467,7 +479,7 @@
             NVIDIA<br>
             Germany
         </p>
-            <div class="speaker-topics"><span>HPC Architecture</span><span>Large-Scale Clusters</span></div>
+            <div class="speaker-topics"><span>HPC Architecture</span><span>Large-Scale Clusters</span><span>25+ Years in European HPC Ecosystem</span></div>
     </div>
 </div>
 	
@@ -1067,6 +1079,26 @@
 <hr>
                   <h3>Featured Speech Announced!</h3>
                     <p>Featured speech by Lori Diachin (LLNL) has been announced. Check the technical details <a href="#keynote">here</a>.</p> 
+                </section>
+                <section id="glance">
+                    <h2>RISE at a Glance</h2>
+                    <div class="glance-grid">
+                        <div class="glance-stat"><strong>16</strong><span>speakers</span></div>
+                        <div class="glance-stat"><strong>6</strong><span>countries</span></div>
+                        <div class="glance-stat"><strong>3</strong><span>continents</span></div>
+                    </div>
+                    <h3 class="glance-heading">Sectors</h3>
+                    <ul class="glance-bars">
+                        <li><span class="panel-track academia">ACADEMIA</span><b>9</b></li>
+                        <li><span class="panel-track industry">INDUSTRY</span><b>6</b></li>
+                        <li><span class="panel-track national-lab">NATIONAL LAB</span><b>3</b></li>
+                    </ul>
+                    <p class="glance-note">Some speakers bridge two sectors.</p>
+                    <h3 class="glance-heading">Industry</h3>
+                    <p class="glance-list">NVIDIA · AWS · IBM · HPE</p>
+                    <h3 class="glance-heading">Regions</h3>
+                    <p class="glance-list">Europe · North America · Middle East</p>
+                    <p class="glance-note">Germany, Netherlands, Saudi Arabia, Switzerland, UK, USA</p>
                 </section>
             </div>
         </div>
