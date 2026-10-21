@@ -23,6 +23,67 @@
         .glance-heading { font-size:1em; margin:16px 0 6px; color:#005f73; }
         .glance-list { margin:0; font-weight:600; color:#333; font-size:0.95em; }
         .glance-note { margin:4px 0 0; font-size:0.8em; color:#777; line-height:1.4; }
+        /* ---------- Page layout: main + sidebar ---------- */
+        .page-layout { display:flex; align-items:flex-start; gap:24px; }
+        .page-main { flex:3; min-width:0; }
+        .page-aside { flex:1; min-width:280px; max-width:400px; }
+        @media (max-width: 960px) {
+            .page-layout { flex-direction:column; gap:0; }
+            .page-aside { min-width:0; max-width:none; width:100%; }
+        }
+        .visually-hidden { position:absolute !important; width:1px; height:1px; overflow:hidden;
+            clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; }
+
+        /* ---------- Join the RISE Community card ---------- */
+        .join-card { padding:0 0 20px; overflow:hidden; border:1px solid #d6e6e9;
+            border-top:4px solid var(--accent); }
+        .join-card:hover { transform:none; }
+        .join-card > *:not(.map-preview) { margin-left:20px; margin-right:20px; }
+        .join-eyebrow { margin-top:18px; margin-bottom:4px; font-size:0.72rem; font-weight:700;
+            letter-spacing:0.08em; text-transform:uppercase; color:var(--accent); line-height:1.4; }
+        .join-card h2 { font-size:1.45em; line-height:1.25; margin-bottom:8px; border-left:0; padding-left:0; }
+        .join-text { margin-top:0; margin-bottom:16px; font-size:0.95rem; line-height:1.55; color:#3d4a52; }
+
+        .map-preview { margin:0 20px 14px; }
+        .map-preview-frame { position:relative; height:380px; border:1px solid #d6e6e9; border-radius:10px;
+            overflow:hidden; background:#f2f7f8; }
+        .map-preview-frame iframe { display:block; width:100%; height:100%; border:0; }
+        /* JS-enhanced: render the map at desktop width and scale it down to a thumbnail */
+        .map-preview-frame.is-scaled iframe { position:absolute; top:0; left:0; width:1200px; height:1000px;
+            transform-origin:0 0; pointer-events:none; }
+        .map-preview-overlay { display:none; }
+        .map-preview-frame.is-scaled .map-preview-overlay { display:flex; position:absolute; inset:0;
+            align-items:flex-end; justify-content:center; padding-bottom:14px; text-decoration:none;
+            background:linear-gradient(to bottom, rgba(0,95,115,0) 55%, rgba(0,95,115,0.55)); }
+        .map-preview-overlay span { padding:6px 14px; border-radius:999px; background:#fff; color:var(--primary);
+            font-size:0.85rem; font-weight:700; box-shadow:0 2px 8px rgba(0,0,0,0.15);
+            transition:transform 0.2s ease; }
+        .map-preview-overlay:hover span { transform:translateY(-2px); }
+        .map-preview-caption { margin:6px 2px 0; font-size:0.78rem; color:#6b7880; line-height:1.4; }
+        .map-preview-caption a { color:var(--primary); text-decoration:underline; }
+
+        .join-actions { display:flex; flex-wrap:wrap; gap:10px; }
+        .btn { box-sizing:border-box; flex:1 1 140px; display:inline-flex; align-items:center; justify-content:center; min-height:44px;
+            padding:10px 16px; border-radius:8px; font-size:0.95rem; font-weight:700; line-height:1.2;
+            text-align:center; text-decoration:none; transition:background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+        .btn:hover { text-decoration:none; }
+        .btn:focus-visible, .news-link:focus-visible, .map-preview-caption a:focus-visible {
+            outline:3px solid var(--highlight); outline-offset:2px; }
+        .btn-primary { background:var(--primary); color:#fff; border:2px solid var(--primary); }
+        .btn-primary:hover { background:#004a5a; border-color:#004a5a; color:#fff; }
+        .btn-secondary { background:#fff; color:var(--primary); border:2px solid var(--primary); }
+        .btn-secondary:hover { background:#eaf5f6; color:#004a5a; }
+        .join-note { margin-top:10px; margin-bottom:0; font-size:0.8rem; color:#6b7880; line-height:1.4; }
+
+        /* ---------- Mobile header: stop the tall header covering the screen ---------- */
+        @media (max-width: 768px) {
+            header { position:static !important; flex-direction:column !important; gap:12px; padding:20px 16px; }
+            header > div { flex:none !important; width:100%; text-align:center !important; }
+            header h1 { font-size:1.6em; margin:0 0 6px; line-height:1.25; }
+            header p { font-size:1em; margin:0; line-height:1.45; }
+            header img { margin:0 auto; }
+            main { padding:16px; }
+        }
     </style>
 </head>
 <body>
@@ -54,8 +115,8 @@
 
 
     <main>
-        <div style="display: flex;">
-            <div style="flex: 3;">
+        <div class="page-layout">
+            <div class="page-main">
                 <section id="objective">
     <h2>Objective</h2>
     <p>
@@ -697,7 +758,8 @@
     </div>
 </div>
 
-                </section>
+                </div>
+</section>
 			
 			
 		<section id="agenda"> <h2>Agenda</h2>
@@ -795,7 +857,7 @@
             </div>
 
             <p>
-                Refresh, connect, and explore the RISE Research Expertise MAP and Innovation Exhinit.
+                Refresh, connect, and explore the RISE Research Expertise MAP and Innovation Exhibit.
             </p>
         </div>
     </div>
@@ -913,6 +975,7 @@
 <div class="agenda-card opening"> <div class="agenda-card-top"> <span class="agenda-tag community"> <h3>CLOSING REMARKS</h3> </span> <span class="agenda-duration">5 min</span> </div>
 
 <p> Closing remarks and appreciation for the RISE 2026 community. </p> </div> </div>
+</div>
 </section>	
 				
                 <section id="Organizers">
@@ -1075,7 +1138,7 @@
                 </section>
             </div>
 
-            <div style="flex: 1; padding-left: 20px;">
+            <aside class="page-aside" aria-label="Announcements, RISE map and key facts">
                 <section id="announcements">
                     <h2>Announcements</h2>
 					<h3>Workshop on SC26 Site Now Available!</h3>
@@ -1083,6 +1146,33 @@
 <hr>
                   <h3>Featured Speech Announced!</h3>
                     <p>Featured speech by Lori Diachin (LLNL) has been announced. Check the technical details <a href="#keynote">here</a>.</p> 
+                </section>
+                <section id="rise-map" class="join-card" aria-labelledby="rise-map-title">
+                    <p class="join-eyebrow">Research Expertise Map &amp; Innovation Exhibit</p>
+                    <h2 id="rise-map-title">Explore the RISE Map!</h2>
+                    <p class="join-text">Share your expertise, showcase your innovations, and connect with researchers and collaborators.</p>
+
+                    <div class="map-preview">
+                        <div class="map-preview-frame">
+                            <iframe src="https://ayeshaafzal91.github.io/rise/map.html"
+                                    title="Preview of the RISE Research Expertise Map and Innovation Exhibit"
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer"></iframe>
+                            <a class="map-preview-overlay" href="https://ayeshaafzal91.github.io/rise/map.html" target="_blank" rel="noopener"
+                               tabindex="-1" aria-hidden="true"><span>Open full map ↗</span></a>
+                        </div>
+                        <p class="map-preview-caption">Live preview · <a href="https://ayeshaafzal91.github.io/rise/map.html" target="_blank" rel="noopener">map not loading? Open it here</a></p>
+                    </div>
+
+                    <div class="join-actions">
+                        <a class="btn btn-primary" href="https://ayeshaafzal91.github.io/rise/map.html" target="_blank" rel="noopener">
+                            Open the full map<span class="visually-hidden"> (opens in a new tab)</span>
+                        </a>
+                        <a class="btn btn-secondary" href="https://docs.google.com/forms/d/e/1FAIpQLSeO3amaHIh_grxtdJdC0PTYrRwCSwTXQ_AI4Nq47HQrGl_HkQ/viewform" target="_blank" rel="noopener">
+                            Add your profile<span class="visually-hidden"> (opens in a new tab)</span>
+                        </a>
+                    </div>
+                    <p class="join-note">Adding a project to the Innovation Exhibit is optional.</p>
                 </section>
                 <section id="glance">
                     <h2>RISE@SC26 at a Glance</h2>
@@ -1099,7 +1189,7 @@
                     <p class="glance-list">Europe · North America · Middle East</p>
                     <p class="glance-note">Germany, Netherlands, Saudi Arabia, Switzerland, UK, USA</p>
                 </section>
-            </div>
+            </aside>
         </div>
     </main>
 	
@@ -1107,5 +1197,23 @@
         <p>&copy; 2026 RISE Workshop. All Rights Reserved.</p>
 	<p style="font-size: 0.8em;">The <a href="http://ayeshaafzal91.github.io/RISE">RISE</a> site is maintained by <a href="https://hpc.fau.de/faudir/ayesha-afzal">Ayesha Afzal</a>.</p>
     </footer>
+    <script>
+    /* Scale the embedded map to a readable thumbnail; without JS the iframe stays a normal, scrollable embed. */
+    (function () {
+        var box = document.querySelector('.map-preview-frame');
+        if (!box || !('ResizeObserver' in window)) return;
+        var frame = box.querySelector('iframe');
+        var W = 1200, H = 1000, MAX_H = 420;
+        box.classList.add('is-scaled');
+        frame.setAttribute('tabindex', '-1');
+        function fit() {
+            var s = box.clientWidth / W;
+            frame.style.transform = 'scale(' + s + ')';
+            box.style.height = Math.min(H * s, MAX_H) + 'px';
+        }
+        new ResizeObserver(fit).observe(box);
+        fit();
+    })();
+    </script>
 </body>
 </html>
