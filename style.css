@@ -1933,3 +1933,17 @@ color: #333;
 grid-template-columns: 1fr;
 }
 }
+
+
+/* Session chair affiliations: inline, plain text */
+.chair-affiliation {
+    display: inline;
+    font-size: 0.75em;
+    font-weight: 400;
+    color: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 3px;
+}
+
