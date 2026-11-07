@@ -1954,3 +1954,10 @@ grid-template-columns: 1fr;
     color: #66727a;
     font-style: italic;
 }
+
+.news-list { list-style:none; margin:14px 0 0; padding:0; }
+.news-item { padding:12px 0 12px 14px; border-left:3px solid #d6e6e9; }
+.news-item + .news-item { margin-top:10px; }
+.news-item h3 { margin:0 0 4px; font-size:1.05rem; line-height:1.35; color:#17324d; }
+.news-item p { margin:0 0 6px; font-size:0.92rem; line-height:1.5; color:#4a5860; }
+.news-link { font-size:0.9rem; font-weight:700; color:var(--primary); }
