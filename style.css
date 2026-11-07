@@ -1955,3 +1955,7 @@ grid-template-columns: 1fr;
     font-style: italic;
 }
 
+.glance-sectors { list-style:none; margin:0; padding:0; }
+.glance-sectors li { padding:6px 0; }
+.glance-sectors li + li { border-top:1px solid #e6eef0; }
+.glance-sectors .panel-track { margin:0 0 2px; font-size:11px; padding:3px 9px; }
